@@ -71,6 +71,10 @@ int main(void)
     // Initialization
     //---------------------------------------------------------
     InitWindow(screenWidth, screenHeight, "Space Invaders!");
+    Image icon = LoadImage("resources/img/icon.png");
+    SetWindowIcon(icon);
+    UnloadImage(icon);
+
     InitAudioDevice();                                                                  // Initialize audio device
 
     // Load global data (assets that must be available in all screens, i.e. font)
