@@ -26,16 +26,18 @@ GameScreen currentScreen = GameScreen::LOGO;
 Font font = { 0 };
 Music music = { 0 };
 Sound fxCoin = { 0 };
-
 std::vector<Texture2D> allTexture;
 
 // Player-specified resources
-Player* player = nullptr;
-
-// Bullets-specified resources
 Sound fxBulletShot = { 0 };
-std::vector<Bullet> enemyBullets;
+Player* player = nullptr;
 std::vector<Bullet> playerBullets;
+
+// Enemy-specified resources
+Sound fxEnemyExplosion = { 0 };
+std::vector<Enemy> enemies;
+std::vector<Bullet> enemyBullets;
+
 
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
@@ -82,6 +84,7 @@ int main(void)
     music = LoadMusicStream("resources/Boss_Time.mp3");
     fxCoin = LoadSound("resources/coin.wav");
     fxBulletShot = LoadSound("resources/sound/shoot.wav");
+    fxEnemyExplosion = LoadSound("resources/sound/invaderkilled.wav");
     loadAllTextures();
 
     SetMusicVolume(music, 0.7f);
@@ -93,6 +96,16 @@ int main(void)
 
     // Creazione degli oggetti di gioco
     player = new Player(allTexture.at(TextureIndexes::PLAYER_T));
+
+    enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
+        allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), 0, 1, EnemyType::SQUID));
+
+    /*
+    for (int i = 0; i < MAX_ENEMYS_COLUMN; i++) {
+        enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
+                                allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), i, 1, EnemyType::SQUID));
+    }
+    */
 
 #if defined(PLATFORM_WEB)
     emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
@@ -124,6 +137,7 @@ int main(void)
     UnloadMusicStream(music);
     UnloadSound(fxCoin);
     UnloadSound(fxBulletShot);
+    UnloadSound(fxEnemyExplosion);
 
     // Unaload all textures from V-RAM
     for (auto& obj : allTexture)
@@ -148,27 +162,131 @@ int loadAllTextures(void) {
     image = LoadImage("resources/img/background.png");
     texture = LoadTextureFromImage(image);
     allTexture.push_back(texture);                                                      // BACKGROUND_T => index 0
-    UnloadImage(image);                                                                 // Unload image from RAM
+    UnloadImage(image);
 
-    // Load PLAYER Texture on RAM
+// PLAYER TEXTURES
+//----------------------------------------------------------------------------------
+    // PLAYER
     image = LoadImage("resources/img/player/player.png");
     ImageColorTint(&image, GREEN);
     texture = LoadTextureFromImage(image);
     allTexture.push_back(texture);                                                      // PLAYER_T => index 1
-    UnloadImage(image);                                                                 // Unload image from RAM
+    UnloadImage(image);
 
-    // Load PLAYER_BULLET Texture on RAM
+    // PLAYER_EXPLODING_1
+    image = LoadImage("resources/img/player/player_exploding_1.png");
+    ImageColorTint(&image, GREEN);
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // PLAYER_EXPLODING_1_T => index 2
+    UnloadImage(image);
+
+    // PLAYER_EXPLODING_2
+    image = LoadImage("resources/img/player/player_exploding_2.png");
+    ImageColorTint(&image, GREEN);
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // PLAYER_EXPLODING_2_T => index 2
+    UnloadImage(image);
+
+    // PLAYER_BULLET
     image = LoadImage("resources/img/player/bullet/player_bullet.png");
     texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // PLAYER_BULLET_T => index 2
-    UnloadImage(image);                                                                 // Unload image from RAM
+    allTexture.push_back(texture);                                                      // PLAYER_BULLET_T => index 4
+    UnloadImage(image);
 
-    // Load PLAYER_BULLET_EXPLODING Texture on RAM
+    // PLAYER_BULLET_EXPLODING
     image = LoadImage("resources/img/player/bullet/player_bullet_exploding.png");
     ImageColorTint(&image, RED);
     texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // PLAYER_BULLET_EXPLODING_T => index 3
-    UnloadImage(image);                                                                 // Unload image from RAM
+    allTexture.push_back(texture);                                                      // PLAYER_BULLET_EXPLODING_T => index 5
+    UnloadImage(image);
+
+// ENEMIES TEXTURES
+//----------------------------------------------------------------------------------
+    // ENEMY_EXPLODING
+    image = LoadImage("resources/img/enemies/enemy_exploding.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_EXPLODING_T => index 6
+    UnloadImage(image);
+
+    // ENEMY_UFO
+    image = LoadImage("resources/img/enemies/0_UFO_Boss/ufo.png");
+    ImageColorTint(&image, RED);
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_UFO_T => index 7
+    UnloadImage(image);
+
+    // ENEMY_UFO_EXPLODING
+    image = LoadImage("resources/img/enemies/0_UFO_Boss/ufo_exploding.png");
+    ImageColorTint(&image, RED);
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_UFO_T => index 8
+    UnloadImage(image);
+
+    // ENEMY_SQUID_1
+    image = LoadImage("resources/img/enemies/1_squid/squid_1.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_SQUID_1_T => index 9
+    UnloadImage(image);
+
+    // ENEMY_SQUID_2
+    image = LoadImage("resources/img/enemies/1_squid/squid_2.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_SQUID_2_T => index 10
+    UnloadImage(image);
+
+    // ENEMY_CRAB_1
+    image = LoadImage("resources/img/enemies/2_crab/crab_1.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_CRAB_1_T => index 11
+    UnloadImage(image);
+
+    // ENEMY_CRAB_2
+    image = LoadImage("resources/img/enemies/2_crab/crab_2.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_CRAB_2_T => index 12
+    UnloadImage(image);
+
+    // ENEMY_OCTOPUS_1
+    image = LoadImage("resources/img/enemies/3_octopus/octopus_1.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_OCTOPUS_1_T => index 13
+    UnloadImage(image);
+
+    // ENEMY_OCTOPUS_2
+    image = LoadImage("resources/img/enemies/3_octopus/octopus_2.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_OCTOPUS_2_T => index 14
+    UnloadImage(image);
+
+    // EMENY_BULLET_1
+    image = LoadImage("resources/img/enemies/bullet/enemy_bullet_1.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_BULLET_1_T => index 15
+    UnloadImage(image);
+
+    // EMENY_BULLET_2
+    image = LoadImage("resources/img/enemies/bullet/enemy_bullet_2.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_BULLET_2_T => index 16
+    UnloadImage(image);
+
+    // EMENY_BULLET_3
+    image = LoadImage("resources/img/enemies/bullet/enemy_bullet_3.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_BULLET_3_T => index 17
+    UnloadImage(image);
+
+    // EMENY_BULLET_4
+    image = LoadImage("resources/img/enemies/bullet/enemy_bullet_4.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_BULLET_4_T => index 18
+    UnloadImage(image);
+
+    // EMENY_BULLET_EXPLODING
+    image = LoadImage("resources/img/enemies/bullet/enemy_bullet_exploding.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_BULLET_EXPLODING_T => index 19
+    UnloadImage(image);
 
     return 1;
 }
@@ -309,7 +427,7 @@ static void UpdateDrawFrame(void)
             } break;
             case GAMEPLAY:
             {
-                UpdateGameplayScreen(player, enemyBullets, playerBullets);
+                UpdateGameplayScreen(player, enemyBullets, playerBullets, enemies);
 
                 if (FinishGameplayScreen() == 1) TransitionToScreen(ENDING);
                 //else if (FinishGameplayScreen() == 2) TransitionToScreen(TITLE);
@@ -339,7 +457,7 @@ static void UpdateDrawFrame(void)
             case LOGO: DrawLogoScreen(); break;
             case TITLE: DrawTitleScreen(); break;
             case OPTIONS: DrawOptionsScreen(); break;
-            case GAMEPLAY: DrawGameplayScreen(player, enemyBullets, playerBullets); break;
+            case GAMEPLAY: DrawGameplayScreen(player, enemyBullets, playerBullets, enemies); break;
             case ENDING: DrawEndingScreen(); break;
             default: break;
         }
