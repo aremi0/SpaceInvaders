@@ -11,6 +11,7 @@ public:
 	//int speed;
 	bool exploding;
 	EnemyType type;
+	int direction;
 
 	float margin;
 	int gridX;								// ...*
@@ -18,6 +19,7 @@ public:
 	Position position;						// Absolute position on the screen.
 
 	//Animation data
+	bool movementState;
 	int explodingAnimFramesCounter;
 
 // Textures
@@ -29,7 +31,7 @@ public:
 // Methods
 //----------------------------------------------------------------------------------
 	Enemy(Texture2D enemy_t1, Texture2D enemy_t2, Texture2D enemyExploding_t, int x, int y, EnemyType type);
-	void move(Movement direction, float frameTime);
-	void draw(bool movementState);
+	void move(float frameTime, bool goDown = false);
+	void draw();
 };
 

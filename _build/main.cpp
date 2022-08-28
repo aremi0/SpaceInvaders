@@ -98,10 +98,16 @@ int main(void)
     player = new Player(allTexture.at(TextureIndexes::PLAYER_T));
 
     enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
-        allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), 0, 1, EnemyType::SQUID));
+        allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), 1, 1, EnemyType::SQUID));
+
+    enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
+        allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), 2, 1, EnemyType::SQUID));
+
+    enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
+        allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), 3, 1, EnemyType::SQUID));
 
     /*
-    for (int i = 0; i < MAX_ENEMYS_COLUMN; i++) {
+    for (int i = 1; i <= MAX_ENEMYS_COLUMN; i++) {
         enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
                                 allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), i, 1, EnemyType::SQUID));
     }

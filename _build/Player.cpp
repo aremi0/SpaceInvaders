@@ -26,7 +26,7 @@ void Player::hardReset(void) {
 
 // Screen_gameplay will check limits of the screen
 void Player::move(Movement direction, float frameTime) {
-	this->position.x += (direction * this->speed * frameTime);
+	this->position.x += ((direction == Movement::RIGHT ? +1 : -1) * this->speed * frameTime);
 }
 
 void Player::draw(void) {

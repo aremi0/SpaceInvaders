@@ -18,7 +18,7 @@ Bullet::Bullet(Texture2D bullet_t, Texture2D bulletExploding_t, Position spawn, 
 }
 
 void Bullet::move(Movement direction, float frameTime) {
-	this->position.y += (direction * this->speed * frameTime);
+	this->position.y += ((direction == Movement::UP ? -1 : +1) * this->speed * frameTime);
 	this->speed += 20;
 }
 

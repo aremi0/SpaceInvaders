@@ -16,11 +16,11 @@
 //----------------------------------------------------------------------------------
 static int framesCounter = 0;
 static int finishScreen = 0;
+int state = 0;
+bool writeState = 0;
 
 // Animation
-int state = 0;
-Movement currentDirection = Movement::RIGHT;
-
+Movement enemyCurrentDirection = Movement::RIGHT;
 std::vector<Bullet> playerBulletsExplAnim; // Contenitore dei proiettili che stanno esplodendo
 
 //----------------------------------------------------------------------------------
@@ -109,23 +109,51 @@ void playerDrawManager(Player* player, std::vector<Bullet>& playerBullets) {
 // Enemies-related functions (enemies-managing)
 //----------------------------------------------------------------------------------
 
-// Update player related objects before drawing
+// Update enemies related objects before drawing
 void enemiesUpdateManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets) {
 
-    // Screen limits checker (go down) and update next-direction
-    if (begin(enemies)->position.x <= 0) {
-        for (auto& enemy : enemies)
-            enemy.move(Movement::DOWN, framesCounter);
-        currentDirection = Movement::RIGHT;
-    }
-    else if (end(enemies)->position.x >= GetScreenWidth()) {
-        for (auto& enemy : enemies)
-            enemy.move(Movement::DOWN, framesCounter);
-        currentDirection = Movement::LEFT;
-    }
-    
-    for (auto& enemy : enemies) {
+    // Screen limits checker
+    if (enemyCurrentDirection == Movement::LEFT) {
 
+        if (enemies.begin()->position.x <= GetScreenWidth() * 0.01) {
+            for (auto& enemy : enemies) {
+                enemy.move(GetFrameTime(), true);
+            }
+
+            enemyCurrentDirection = Movement::RIGHT;
+        }
+        else {
+            for (auto& enemy : enemies) {
+                enemy.move(GetFrameTime());
+                printf("_debug__enemy_[%d][%d]___<x:%d><y:%d>\n", enemy.gridX, enemy.gridY, (int)enemy.position.x, (int)enemy.position.y);
+            }
+        }
+    }
+    else if (enemyCurrentDirection == Movement::RIGHT) {
+        
+        if (enemies.back().position.x + enemies.back().enemy_T1.width >= GetScreenWidth() - (GetScreenWidth() * 0.01)) {
+            for (auto& enemy : enemies)
+                enemy.move(GetFrameTime(), true);
+
+            enemyCurrentDirection = Movement::LEFT;
+        }
+        else {
+            for (auto& enemy : enemies) {
+                enemy.move(GetFrameTime());
+                printf("_debug__enemy_[%d][%d]___<x:%d><y:%d>\n", enemy.gridX, enemy.gridY, (int)enemy.position.x, (int)enemy.position.y);
+            }
+        }
+    }
+
+    printf("\n");
+}
+
+// Draw enemies related objectes
+void enemiesDrawManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets) {
+
+
+    for (auto& enemy : enemies) {
+        enemy.draw();
     }
 }
 
@@ -137,7 +165,8 @@ void enemiesUpdateManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enem
 void InitGameplayScreen(void)
 {
     // TODO: Initialize GAMEPLAY screen variables here!
-    currentDirection = Movement::RIGHT;
+    enemyCurrentDirection = Movement::RIGHT;
+
     framesCounter = 0;
     finishScreen = 0;
     state = 0;
@@ -148,18 +177,30 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
 {
     // TODO: Update GAMEPLAY screen variables here!
 
-    // Animation
-    if (state == 0) {
+    // DIFFICULTY level 
+    if (state <= 4) { // slow
         framesCounter++;
 
-        if (framesCounter == 20) {
-            state = 1;
+        if (framesCounter == 70) {
             framesCounter = 0;
+            state++;
+            enemiesUpdateManager(enemies, enemyBullets);
         }
     }
-    else if (state == 1) {
-        state = 0;
-        framesCounter = 0;
+    else if (state <= 80) { // faster
+        framesCounter++;
+
+        if (framesCounter % 5 == 0) {
+            framesCounter = 0;
+            state++;
+            enemiesUpdateManager(enemies, enemyBullets);
+        }
+
+        if (state <= 30) {
+            writeState = true;
+        }
+        else
+            writeState = false;
     }
 
     // Press enter or tap to change to ENDING screen
@@ -181,10 +222,16 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
     DrawTexture(allTexture.at(TextureIndexes::BACKGROUND_T), 0, 0, WHITE);
 
     playerDrawManager(player, playerBullets);
+    enemiesDrawManager(enemies, enemyBullets);
 
     DrawTextEx(font, "GAMEPLAY SCREEN", Vector2{ 20, 10 }, font.baseSize*1.0f, 4, Color {190, 33, 55, 100});
     DrawText("Movement: \tW - A\nShot: \tSPACE", 25, 30, 18, MAROON);
     DrawFPS(GetScreenWidth() - 100, 10);
+
+    if (writeState) {
+        int aux = MeasureText("state changed => faster", 18);
+        DrawText("state changed => faster", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() / 2, 18, MAROON);
+    }
 }
 
 // Gameplay Screen Unload logic

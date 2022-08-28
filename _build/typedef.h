@@ -26,7 +26,7 @@
 
 #ifndef DEF_MOVEMENT
 
-	enum Movement { UP = -1, DOWN = +1, LEFT = -1, RIGHT = +1 };
+	enum Movement { UP = 0, DOWN, LEFT, RIGHT };
 
 #endif // !DEF_MOVEMENT
 
