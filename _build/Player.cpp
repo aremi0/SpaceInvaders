@@ -4,37 +4,31 @@ Player::Player(Texture2D player_t) {
 // Texture init
 	this->player_T = player_t;
 
-// Exploding Animation init
-
-// Parameter init
-	this->hardReset();
-	this->position.y = GetScreenHeight() * 0.90f; // Posiziona il player al 90% dell'altezza della 
-	this->speed = 300;
+// Animation init
 	this->exploding = false;
+
+// Data init
+	this->hardReset();
+	this->position.y = GetScreenHeight() * 0.90f; // Locate player at 90% of screen height
+	this->speed = 300;
 }
 
-/*
-	shift positivo o negatavo; permette di muovere il player orizzontalmente. Si occuperà screen_gameplay di controllare se il movimento e' legale
-*/
-void Player::move(Movement direction, float frameTime) {
-	this->position.x += (direction * this->speed * frameTime);
-}
-
-/*
-	Resetta solo le variabili tali da poter affrontare una nuova ondata (next-level)
-*/
-void Player::reset() {
+// Reset just the variables to start a new wave (next-level)
+void Player::reset(void) {
 	this->position.x = PLAYER_SPAWNPOINT;
 }
 
-/*
-	Resetta tutte le variabili per eventualmente ricominciare un nuovo game
-*/
-void Player::hardReset() {
+// Reset alla variables to start a new game
+void Player::hardReset(void) {
 	this->life = 3;
 	this->reset();
 }
 
-void Player::draw() {
+// Screen_gameplay will check limits of the screen
+void Player::move(Movement direction, float frameTime) {
+	this->position.x += (direction * this->speed * frameTime);
+}
+
+void Player::draw(void) {
 	DrawTexture(this->exploding ? this->playerExploding_T : this->player_T, this->position.x, this->position.y, WHITE);
 }

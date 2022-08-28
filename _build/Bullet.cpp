@@ -6,11 +6,11 @@ Bullet::Bullet(Texture2D bullet_t, Texture2D bulletExploding_t, Position spawn, 
 	this->bullet_T = bullet_t;
 	this->bulletExplodind_T = bulletExploding_t;
 	
-// Exploding Animation init
+// Animation init
 	this->exploding = exploding;
 	this->explodingAnimFramesCounter = 5;
 
-// Parameter init
+// Data init
 	this->position.x = spawn.x;
 	this->position.y = spawn.y;
 	this->type = type;
