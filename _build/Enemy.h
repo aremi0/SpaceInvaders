@@ -32,6 +32,7 @@ public:
 //----------------------------------------------------------------------------------
 	Enemy(Texture2D enemy_t1, Texture2D enemy_t2, Texture2D enemyExploding_t, int x, int y, EnemyType type);
 	void move(float frameTime, bool goDown = false);
-	void draw();
+	void draw(void);
+	Enemy* StartExploding(void);
 };
 

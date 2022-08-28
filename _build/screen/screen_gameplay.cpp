@@ -21,23 +21,24 @@ bool writeState = 0;
 
 // Animation
 Movement enemyCurrentDirection = Movement::RIGHT;
-std::vector<Bullet> playerBulletsExplAnim; // Contenitore dei proiettili che stanno esplodendo
+std::vector<Bullet> playerBulletsExplAnim;                          // Container of player's exploding bullets
+std::vector<Enemy> enemyExplAnim;                                   // Container of exploding enemies
 
 //----------------------------------------------------------------------------------
 // Player-related functions (player-managing)
 //----------------------------------------------------------------------------------
 
 // Update player related objects before drawing
-void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets) {
+void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies) {
 
-    // Movement-handler with screen limits checker
+    // Player movement handler with screen limits checker
     //----------------------------------------------------------------------------------
     if (IsKeyDown(KEY_A) && player->position.x >= 0)
         player->move(Movement::LEFT, GetFrameTime());
     if (IsKeyDown(KEY_D) && player->position.x + player->player_T.width <= GetScreenWidth())
         player->move(Movement::RIGHT, GetFrameTime());
 
-    // Se premo SPAZIO ed il player ha ancora dei colpi disponibili... Creo ed inserisco a schermo un nuovo bullet
+    // If SPACE is pressed and player still has shottable bullets... Create and draw new player bullet
     if (IsKeyPressed(KEY_SPACE) && (playerBullets.size() < MAX_PLAYER_BULLETS)) {
 
         playerBullets.push_back(Bullet(allTexture.at(TextureIndexes::PLAYER_BULLET_T), allTexture.at(TextureIndexes::PLAYER_BULLET_EXPLODING_T),
@@ -45,42 +46,70 @@ void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std
 
         PlaySound(fxBulletShot);
     }
-    //----------------------------------------------------------------------------------
 
-    // Animazione proiettili e loro esplosione...
+    // Player's bullets animation & explosion
     //----------------------------------------------------------------------------------
-    // FLOOR-Explosion Animation
+    // FLOOR-explosion animation
     if (!playerBulletsExplAnim.empty()) {
         for (auto bullet = begin(playerBulletsExplAnim); bullet != end(playerBulletsExplAnim); ) {
 
-            //printf("_debug___2_Bullet[%d]__<x:%d><y:%d>\n", bullet->explodingAnimFramesCounter, (int)bullet->position.x, (int)bullet->position.y);
-            bullet->explodingAnimFramesCounter--; // Durata dell'esplosione
+            bullet->explodingAnimFramesCounter--; // Explosion duration
 
             if (bullet->explodingAnimFramesCounter <= 0)
-                bullet = playerBulletsExplAnim.erase(bullet); // Se l'esplosione è terminata elimino l'oggetto
+                bullet = playerBulletsExplAnim.erase(bullet); // If explosion terminated => delete object
             else
                 bullet++;
         }
     }
 
-    // UP-Movement Animation
+    // UP-movement animation
     if (!playerBullets.empty()) {
         for (auto bullet = begin(playerBullets); bullet != end(playerBullets); ) {
-            // Update posizione bullet
-            bullet->move(Movement::UP, GetFrameTime());
+            
+            bullet->move(Movement::UP, GetFrameTime()); // Update bullet position
 
-            // printf("_debug___2_Bullet[%d]__<x:%d><y:%d>\n", bullet->type, (int)bullet->position.x, (int)bullet->position.y);
-
-                        // Se il proiettile ha raggiunto il soffito viene inserito tra gli oggetti "proiettili exploding" e rimosso dai proiettili sparati dal player
-            if (bullet->position.y <= -10) {
+            if (bullet->position.y <= -10) { // If the current player bullet reach the screen roof => StartExploding()
+                
                 bullet->position.y = 0;
-                playerBulletsExplAnim.push_back(Bullet(allTexture.at(TextureIndexes::PLAYER_BULLET_T), allTexture.at(TextureIndexes::PLAYER_BULLET_EXPLODING_T),
-                    bullet->position, bullet->type, true));
-
+                playerBulletsExplAnim.push_back(*bullet->StartExploding());
                 bullet = playerBullets.erase(bullet); // Elimino il bullet che sta esplodendo
             }
             else
                 bullet++;
+        }
+    }
+
+    // Enemy Collision-detector & eplosion animation
+    //----------------------------------------------------------------------------------
+    // HIT-explosion animation
+    if (!enemyExplAnim.empty()) {
+        for (auto& enemy = begin(enemyExplAnim); enemy != end(enemyExplAnim); ) {
+            enemy->explodingAnimFramesCounter--;
+
+            if (enemy->explodingAnimFramesCounter <= 0)
+                enemy = enemyExplAnim.erase(enemy);
+            else
+                enemy++;
+        }
+    }
+
+    // player's bullets vs enemy => Collision-Detector
+    if (!playerBullets.empty() && !enemies.empty()) {
+        for (auto bullet = begin(playerBullets); bullet != end(playerBullets); bullet++) {
+            for (auto enemy = begin(enemies); enemy != end(enemies); ) {
+                // For each shotted player's bullet check collision with each enemy...
+                if (CheckCollisionRecs(Rectangle{ enemy->position.x, enemy->position.y, enemy->enemy_T1.width * 1.0f, enemy->enemy_T1.height * 1.0f },
+                    Rectangle{ bullet->position.x, bullet->position.y, bullet->bullet_T.width * 1.0f, bullet->bullet_T.height * 1.0f })) {
+
+                    printf("___HIT_____enemy_<x:%d><y:%d>__________\n", enemy->gridX, enemy->gridY);
+                    PlaySound(fxEnemyExplosion);
+                    enemyExplAnim.push_back(*enemy->StartExploding());
+                    enemy = enemies.erase(enemy);
+                    bullet->position.x = DEBUG_X;
+                }
+                else
+                    enemy++;
+            }
         }
     }
 }
@@ -88,21 +117,21 @@ void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std
 // Draw player related objectes
 void playerDrawManager(Player* player, std::vector<Bullet>& playerBullets) {
 
-    // Disegno i proiettili in movimento non ancora esplosi
+    // Draw UP-movement of shotted player's bullets
     if (!playerBullets.empty()) {
         for (auto bullet = begin(playerBullets); bullet != end(playerBullets); bullet++) {
             bullet->draw();
         }
     }
 
-    // Disegno/Animo le esplosioni dei proiettili
+    // Draw player's bullet explosion animation
     if (!playerBulletsExplAnim.empty()) {
         for (auto bullet = begin(playerBulletsExplAnim); bullet != end(playerBulletsExplAnim); bullet++) {
             bullet->draw();
         }
     }
 
-    player->draw();
+    player->draw(); // Draw the player tank
 }
 
 //----------------------------------------------------------------------------------
@@ -112,40 +141,42 @@ void playerDrawManager(Player* player, std::vector<Bullet>& playerBullets) {
 // Update enemies related objects before drawing
 void enemiesUpdateManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets) {
 
-    // Screen limits checker
-    if (enemyCurrentDirection == Movement::LEFT) {
+    // Enemies movement with screen limits checker
+    //----------------------------------------------------------------------------------
+    if (!enemies.empty()) {
 
-        if (enemies.begin()->position.x <= GetScreenWidth() * 0.01) {
-            for (auto& enemy : enemies) {
-                enemy.move(GetFrameTime(), true);
+        if (enemyCurrentDirection == Movement::LEFT) { // Going to LEFT and...
+            if (enemies.begin()->position.x <= SCREEN_WIDTH_MARGIN) { // ...i'm alredy out of margin...
+                for (auto& enemy : enemies) { // ...go down and invert movement direction
+                    enemy.move(GetFrameTime(), true);
+                }
+
+                enemyCurrentDirection = Movement::RIGHT;
             }
-
-            enemyCurrentDirection = Movement::RIGHT;
+            else { // ...else, if i'm not illegal... just move
+                for (auto& enemy : enemies) {
+                    enemy.move(GetFrameTime());
+                }
+            }
         }
-        else {
-            for (auto& enemy : enemies) {
-                enemy.move(GetFrameTime());
-                printf("_debug__enemy_[%d][%d]___<x:%d><y:%d>\n", enemy.gridX, enemy.gridY, (int)enemy.position.x, (int)enemy.position.y);
+        else if (enemyCurrentDirection == Movement::RIGHT) {
+
+            if (enemies.back().position.x + enemies.back().enemy_T1.width >= GetScreenWidth() - (GetScreenWidth() * 0.01)) {
+                for (auto& enemy : enemies)
+                    enemy.move(GetFrameTime(), true);
+
+                enemyCurrentDirection = Movement::LEFT;
+            }
+            else {
+                for (auto& enemy : enemies) {
+                    enemy.move(GetFrameTime());
+                }
             }
         }
     }
-    else if (enemyCurrentDirection == Movement::RIGHT) {
-        
-        if (enemies.back().position.x + enemies.back().enemy_T1.width >= GetScreenWidth() - (GetScreenWidth() * 0.01)) {
-            for (auto& enemy : enemies)
-                enemy.move(GetFrameTime(), true);
 
-            enemyCurrentDirection = Movement::LEFT;
-        }
-        else {
-            for (auto& enemy : enemies) {
-                enemy.move(GetFrameTime());
-                printf("_debug__enemy_[%d][%d]___<x:%d><y:%d>\n", enemy.gridX, enemy.gridY, (int)enemy.position.x, (int)enemy.position.y);
-            }
-        }
-    }
 
-    printf("\n");
+
 }
 
 // Draw enemies related objectes
@@ -154,6 +185,10 @@ void enemiesDrawManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyB
 
     for (auto& enemy : enemies) {
         enemy.draw();
+    }
+
+    for (auto& explodingEnemy : enemyExplAnim) {
+        explodingEnemy.draw();
     }
 }
 
@@ -175,22 +210,29 @@ void InitGameplayScreen(void)
 // Gameplay Screen Update logic
 void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies)
 {
-    // TODO: Update GAMEPLAY screen variables here!
+    // Press enter or tap to change to ENDING screen
+    if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
+    {
+        finishScreen = 1;
+        PlaySound(fxCoin);
+    }
 
-    // DIFFICULTY level 
-    if (state <= 4) { // slow
+    playerUpdateManager(player, playerBullets, enemyBullets, enemies);
+
+    // Speed of enemies
+    if (state <= 4) { 
         framesCounter++;
 
-        if (framesCounter == 70) {
+        if (framesCounter == 70) { // slow
             framesCounter = 0;
             state++;
             enemiesUpdateManager(enemies, enemyBullets);
         }
     }
-    else if (state <= 80) { // faster
+    else if (state > 4) { 
         framesCounter++;
 
-        if (framesCounter % 5 == 0) {
+        if (framesCounter % 5 == 0) { // faster
             framesCounter = 0;
             state++;
             enemiesUpdateManager(enemies, enemyBullets);
@@ -203,14 +245,6 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
             writeState = false;
     }
 
-    // Press enter or tap to change to ENDING screen
-    if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
-    {
-        finishScreen = 1;
-        PlaySound(fxCoin);
-    }
-
-    playerUpdateManager(player, playerBullets, enemyBullets);
 }
 
 // Gameplay Screen Draw logic

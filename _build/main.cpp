@@ -22,6 +22,8 @@
 //----------------------------------------------------------------------------------
 
 // Game resources
+float SCREEN_WIDTH_MARGIN = 0;
+float SCREEN_HEIGHT_MARGIN = 0;
 GameScreen currentScreen = GameScreen::LOGO;
 Font font = { 0 };
 Music music = { 0 };
@@ -42,7 +44,7 @@ std::vector<Bullet> enemyBullets;
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
-static const int screenWidth = 900;
+static const int screenWidth = 540;
 static const int screenHeight = 680;
 
 // Required variables to manage screen transitions (fade-in, fade-out)
@@ -56,11 +58,9 @@ static GameScreen transToScreen = GameScreen::_DEB;
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
 static void ChangeToScreen(int screen);     // Change to screen, no transition effect
-
 static void TransitionToScreen(int screen); // Request transition to next screen
 static void UpdateTransition(void);         // Update transition effect
 static void DrawTransition(void);           // Draw transition effect (full-screen rectangle)
-
 static void UpdateDrawFrame(void);          // Update and draw one frame
 
 int loadAllTextures(void);
@@ -73,11 +73,13 @@ int main(void)
     // Initialization
     //---------------------------------------------------------
     InitWindow(screenWidth, screenHeight, "Space Invaders!");
+    SCREEN_WIDTH_MARGIN = GetScreenWidth() * 0.01;
+    SCREEN_HEIGHT_MARGIN = GetScreenHeight() * 0.10;
     Image icon = LoadImage("resources/img/icon.png");
     SetWindowIcon(icon);
     UnloadImage(icon);
 
-    InitAudioDevice();                                                                  // Initialize audio device
+    InitAudioDevice();                      // Initialize audio device
 
     // Load global data (assets that must be available in all screens, i.e. font)
     font = LoadFont("resources/mecha.png");
@@ -87,40 +89,32 @@ int main(void)
     fxEnemyExplosion = LoadSound("resources/sound/invaderkilled.wav");
     loadAllTextures();
 
-    SetMusicVolume(music, 0.7f);
+    SetMusicVolume(music, 1.0f);
     PlayMusicStream(music);
 
     // Setup and init first screen
     currentScreen = LOGO;
     InitLogoScreen();
 
-    // Creazione degli oggetti di gioco
+    // Game object's creation
+    //----------------------------------------------------------------------------------
     player = new Player(allTexture.at(TextureIndexes::PLAYER_T));
 
-    enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
-        allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), 1, 1, EnemyType::SQUID));
-
-    enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
-        allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), 2, 1, EnemyType::SQUID));
-
-    enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
-        allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), 3, 1, EnemyType::SQUID));
-
-    /*
-    for (int i = 1; i <= MAX_ENEMYS_COLUMN; i++) {
+    // First Row of enemies...
+    for (int i = 1; i <= MAX_ENEMIES_COLUMN; i++) {
         enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
                                 allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), i, 1, EnemyType::SQUID));
     }
-    */
+    
 
 #if defined(PLATFORM_WEB)
     emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
 #else
-    SetTargetFPS(60);       // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
+    SetTargetFPS(60);                       // Set our game to run at 60 frames-per-second
 
     // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    //--------------------------------------------------------------------------------------
+    while (!WindowShouldClose())            // Detect window close button or ESC key
     {
         UpdateDrawFrame();
     }
@@ -150,10 +144,9 @@ int main(void)
         UnloadTexture(obj);
     allTexture.clear();
 
-    CloseAudioDevice();     // Close audio context
+    CloseAudioDevice();                     // Close audio context
 
-    CloseWindow();          // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+    CloseWindow();                          // Close window and OpenGL context
 
     return 0;
 }
@@ -450,7 +443,6 @@ static void UpdateDrawFrame(void)
         }
     }
     else UpdateTransition();    // Update transition (fade-in, fade-out)
-    //----------------------------------------------------------------------------------
 
     // Draw
     //----------------------------------------------------------------------------------
@@ -471,8 +463,5 @@ static void UpdateDrawFrame(void)
         // Draw full screen rectangle in front of everything
         if (onTransition) DrawTransition();
 
-        //DrawFPS(10, 10);
-
     EndDrawing();
-    //----------------------------------------------------------------------------------
 }

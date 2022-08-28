@@ -6,8 +6,11 @@
 
 #define MAX_PLAYER_BULLETS 2
 #define PLAYER_SPAWNPOINT 90
-#define MAX_ENEMYS_ROW 5
-#define MAX_ENEMYS_COLUMN 11
+#define MAX_ENEMIES_COLUMN 11
+#define DEBUG_X -100
+
+extern float SCREEN_WIDTH_MARGIN;
+extern float SCREEN_HEIGHT_MARGIN;
 
 #ifndef DEF_POSITION
 

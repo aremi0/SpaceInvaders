@@ -12,7 +12,6 @@ Enemy::Enemy(Texture2D enemy_t1, Texture2D enemy_t2, Texture2D enemyExploding_t,
 
 // Data init
 	//this->resistence = 1;
-	//this->speed = 50;
 	this->direction = +1;
 	this->type = type;
 	this->exploding = false;
@@ -21,7 +20,7 @@ Enemy::Enemy(Texture2D enemy_t1, Texture2D enemy_t2, Texture2D enemyExploding_t,
 	this->gridX = x;
 	this->gridY = y;
 	this->position.x = margin * this->gridX;
-	this->position.y = margin + (GetScreenWidth() * 0.1) * this->gridY;
+	this->position.y = SCREEN_HEIGHT_MARGIN * this->gridY;
 }
 
 void Enemy::move(float frameTime, bool goDown) {
@@ -36,7 +35,7 @@ void Enemy::move(float frameTime, bool goDown) {
 	this->movementState = !this->movementState;
 }
 
-void Enemy::draw() {
+void Enemy::draw(void) {
 	// "movementState" determine which movement animation texture draw
 	if (exploding) {
 		DrawTexture(this->enemyExploding_T, this->position.x, this->position.y, WHITE);
@@ -46,4 +45,9 @@ void Enemy::draw() {
 	}
 
 	
+}
+
+Enemy* Enemy::StartExploding(void) {
+	this->exploding = true;
+	return this;
 }

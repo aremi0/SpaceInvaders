@@ -25,3 +25,8 @@ void Bullet::move(Movement direction, float frameTime) {
 void Bullet::draw() {
 	DrawTexture(this->exploding ? this->bulletExplodind_T : this->bullet_T, this->position.x, this->position.y, WHITE);
 }
+
+Bullet* Bullet::StartExploding(void) {
+	this->exploding = true;
+	return this;
+}

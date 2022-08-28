@@ -9,7 +9,7 @@ Player::Player(Texture2D player_t) {
 
 // Data init
 	this->hardReset();
-	this->position.y = GetScreenHeight() * 0.90f; // Locate player at 90% of screen height
+	this->position.y = GetScreenHeight() - SCREEN_HEIGHT_MARGIN;
 	this->speed = 300;
 }
 
