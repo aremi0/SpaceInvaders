@@ -12,6 +12,7 @@
 #include "../_build/typedef.h"
 #include "../_build/Player.h"
 #include "../_build/Bullet.h"
+#include "../_build/Enemy.h"
 
 #ifndef SCREENS_H
 #define SCREENS_H
@@ -24,6 +25,7 @@ extern Font font;
 extern Music music;
 extern Sound fxCoin;
 extern Sound fxBulletShot;
+extern Sound fxEnemyExplosion;
 
 extern std::vector<Texture2D> allTexture;
 
@@ -62,8 +64,8 @@ int FinishOptionsScreen(void);
 // Gameplay Screen Functions Declaration
 //----------------------------------------------------------------------------------
 void InitGameplayScreen(void);
-void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets);
-void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets);
+void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies);
+void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies);
 void UnloadGameplayScreen(void);
 int FinishGameplayScreen(void);
 
