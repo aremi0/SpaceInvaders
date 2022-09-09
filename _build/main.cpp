@@ -116,7 +116,7 @@ int main(void)
             allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 2, EnemyType::CRAB);
 
         eny[x * 5 + 2] = new Enemy(allTexture.at(TextureIndexes::ENEMY_CRAB_1_T), allTexture.at(TextureIndexes::ENEMY_CRAB_2_T),
-            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 2, EnemyType::CRAB);
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 3, EnemyType::CRAB);
 
         eny[x * 5 + 3] = new Enemy(allTexture.at(TextureIndexes::ENEMY_OCTOPUS_1_T), allTexture.at(TextureIndexes::ENEMY_OCTOPUS_2_T),
             allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 4, EnemyType::OCTOPUS);
@@ -464,7 +464,7 @@ static void UpdateDrawFrame(void)
             } break;
             case GAMEPLAY:
             {
-                UpdateGameplayScreen(player, enemyBullets, playerBullets, enemies);
+                UpdateGameplayScreen(player, enemyBullets, playerBullets, enemies, eny);
 
                 if (FinishGameplayScreen() == 1) TransitionToScreen(ENDING);
                 else if (FinishGameplayScreen() == 2) TransitionToScreen(OPTIONS);
@@ -493,7 +493,7 @@ static void UpdateDrawFrame(void)
             case LOGO: DrawLogoScreen(); break;
             case TITLE: DrawTitleScreen(); break;
             case OPTIONS: DrawOptionsScreen(); break;
-            case GAMEPLAY: DrawGameplayScreen(player, enemyBullets, playerBullets, enemies); break;
+            case GAMEPLAY: DrawGameplayScreen(player, enemyBullets, playerBullets, enemies, eny); break;
             case ENDING: DrawEndingScreen(); break;
             default: break;
         }

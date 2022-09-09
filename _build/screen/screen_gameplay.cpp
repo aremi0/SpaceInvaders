@@ -19,10 +19,15 @@ static int finishScreen = 0;
 int state = 0;
 int SPEED = 50;
 
+std::array<int, 55> enemiesMatrix;
+
+bool enemyShouldMove = false;
 int textState = 0;
 int textFramesCounter = 0;
+int rowMovEnemyFramesCounter = 0;
 
 // Animation
+int currRowEnemies = 1;
 Movement enemyCurrentDirection;
 std::vector<Bullet> playerBulletsExplAnim;                          // Container of player's exploding bullets
 std::vector<Enemy> enemyExplAnim;                                   // Container of exploding enemies
@@ -32,7 +37,7 @@ std::vector<Enemy> enemyExplAnim;                                   // Container
 //----------------------------------------------------------------------------------
 
 // Update player related objects before drawing
-void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies) {
+void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies, std::array<Enemy*, 55>& eny) {
 
     // Player movement handler with screen limits checker
     //----------------------------------------------------------------------------------
@@ -141,8 +146,9 @@ void playerDrawManager(Player* player, std::vector<Bullet>& playerBullets) {
 // Enemies-related functions (enemies-managing)
 //----------------------------------------------------------------------------------
 
-// Update enemies related objects before drawing
-void enemiesUpdateManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets) {
+// DEPRECATED BY gradualEnemiesMove()
+/*// Update enemies related objects before drawing
+void enemiesUpdateManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets, std::array<Enemy*, 55>& eny) {
 
     // Enemies movement with screen limits checker
     //----------------------------------------------------------------------------------
@@ -180,9 +186,53 @@ void enemiesUpdateManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enem
         }
     }
 }
+*/
+
+int gradualEnemiesMove(std::vector<Enemy>& enemies, int row) {
+    
+    // Gradual enemies movement with screen limits checker
+    //----------------------------------------------------------------------------------
+    if (!enemies.empty()) {
+
+        if (enemyCurrentDirection == Movement::LEFT) {                                      // Going to LEFT and...
+            if (row == 1 && enemies.begin()->position.x <= SCREEN_WIDTH_MARGIN) {           // ...all 5 rows moved and I'm alredy out of margin...
+
+                for (auto& enemy : enemies) {                                               // ...go down and invert movement direction
+                    enemy.move(GetFrameTime(), true);
+                }
+
+                enemyCurrentDirection = Movement::RIGHT;
+                return 1;                                                                   // Next move will be for row 1
+            }
+            else {                                                                          // ...else, if i'm not illegal... just move
+
+                for (auto& enemy : enemies) {
+                    if(enemy.gridY == row)
+                        enemy.move(GetFrameTime());
+                }
+            }
+        }
+        else if (enemyCurrentDirection == Movement::RIGHT) {
+            if (row == 1 && enemies.rbegin()->position.x + enemies.rbegin()->enemy_T1.width >= GetScreenWidth() - (GetScreenWidth() * 0.01)) {
+                for (auto& enemy : enemies)
+                    enemy.move(GetFrameTime(), true);
+
+                enemyCurrentDirection = Movement::LEFT;
+                return 1;
+            }
+            else {
+                for (auto& enemy : enemies) 
+                    if (enemy.gridY == row)
+                        enemy.move(GetFrameTime());
+            }
+        }
+    }
+
+    return row + 1;
+}
 
 // Draw enemies related objectes
-void enemiesDrawManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets) {
+void enemiesDrawManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets, std::array<Enemy*, 55>& eny) {
 
 
     for (auto& enemy : enemies) {
@@ -202,11 +252,15 @@ void enemiesDrawManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyB
 void InitGameplayScreen(std::vector<Enemy>& enemies)
 {
     // TODO: Initialize GAMEPLAY screen variables here!
-    if(enemies.begin()->direction == -1)
+    if(enemies.front().direction == -1)
         enemyCurrentDirection = Movement::LEFT;
     else
         enemyCurrentDirection = Movement::RIGHT;
 
+    enemiesMatrix.fill(1);
+    currRowEnemies = 1;
+
+    enemyShouldMove = false;
     SPEED = 50;
     framesCounter = 0;
     finishScreen = 0;
@@ -217,7 +271,7 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
 }
 
 // Gameplay Screen Update logic
-void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies)
+void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies, std::array<Enemy*, 55>& eny)
 {
     // Press enter or tap to change to ENDING screen
     if (IsKeyPressed(KEY_ENTER))
@@ -255,7 +309,7 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
         PlaySound(fxCoin);
     }
 
-    playerUpdateManager(player, playerBullets, enemyBullets, enemies);
+    playerUpdateManager(player, playerBullets, enemyBullets, enemies, eny);
 
     if (textState > 0)
         textFramesCounter++;
@@ -264,18 +318,29 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
         textState = false;
         textFramesCounter = 0;
     }
+    
+    // Each SPEED frames all enemies are allowed to moves
+    if (framesCounter % SPEED == 0)
+        enemyShouldMove = true;
 
-    //every SPEED frame a enemies movement
-    framesCounter++;
-    if (framesCounter >= SPEED) {
-        enemiesUpdateManager(enemies, enemyBullets);
-        framesCounter = 0;
+    // If all enemies are allowed to moves then move them row-per-row every 15 frames
+    if (enemyShouldMove && framesCounter % 5 == 0) {
+        currRowEnemies = gradualEnemiesMove(enemies, currRowEnemies);
+
+        // If all enemies actually moved then restore the counters
+        if (currRowEnemies == 6) {
+            framesCounter = 0;
+            currRowEnemies = 1;
+            enemyShouldMove = false;
+        }
     }
 
+    framesCounter++;
+    rowMovEnemyFramesCounter++;
 }
 
 // Gameplay Screen Draw logic
-void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies)
+void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies, std::array<Enemy*, 55>& eny)
 {
     // TODO: Draw GAMEPLAY screen here!
 
@@ -283,7 +348,7 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
     DrawTexture(allTexture.at(TextureIndexes::BACKGROUND_T), 0, 0, WHITE);
 
     playerDrawManager(player, playerBullets);
-    enemiesDrawManager(enemies, enemyBullets);
+    enemiesDrawManager(enemies, enemyBullets, eny);
 
     DrawTextEx(font, "GAMEPLAY SCREEN", Vector2{ 20, 10 }, font.baseSize*1.0f, 4, Color {190, 33, 55, 100});
     DrawText("Movement: \tW - A\nShot: \tSPACE", 25, 30, 18, MAROON);
