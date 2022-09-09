@@ -101,13 +101,7 @@ int main(void)
     //----------------------------------------------------------------------------------
     player = new Player(allTexture.at(TextureIndexes::PLAYER_T));
 
-    /***    Enemies array structure;
-    * 
-    * | [squid][crab][crab][octo][octo] | [squid][crab][crab][octo][octo] | [squid][...] |
-    *       0     1     2    3      4         5     6     7     8     9        10   ...
-    * 
-    * Accessing formula: enemies[column * n_rows + row]
-    */
+    // Maybe unnecessary
     for (int x = 0; x < MAX_ENEMIES_COLUMN; x++) {
         eny[x * 5 + 0] = new Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
             allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 1, EnemyType::SQUID);
@@ -126,7 +120,13 @@ int main(void)
     }
 
 
-    // First Row of enemies...
+    /***    Enemies array structure;
+    *
+    * | [squid][crab][crab][octo][octo] | [squid][crab][crab][octo][octo] | [squid][...] |
+    *       0     1     2    3      4         5     6     7     8     9        10   ...
+    *
+    * Accessing formula: enemies[column * n_rows + row]
+    */
     for (int x = 1; x <= MAX_ENEMIES_COLUMN; x++) {
         enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
             allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x, 1, EnemyType::SQUID));

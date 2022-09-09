@@ -14,23 +14,25 @@
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
-static int framesCounter = 0;
 static int finishScreen = 0;
-int state = 0;
 int SPEED = 50;
-
 std::array<int, 55> enemiesMatrix;
 
+// State flags
+int state = 0;
 bool enemyShouldMove = false;
 int textState = 0;
-int textFramesCounter = 0;
-int rowMovEnemyFramesCounter = 0;
 
 // Animation
 int currRowEnemies = 1;
 Movement enemyCurrentDirection;
 std::vector<Bullet> playerBulletsExplAnim;                          // Container of player's exploding bullets
 std::vector<Enemy> enemyExplAnim;                                   // Container of exploding enemies
+
+// Animation frames counter
+int framesCounter = 0;
+int textFramesCounter = 0;
+int rowMovEnemyFramesCounter = 0;
 
 //----------------------------------------------------------------------------------
 // Player-related functions (player-managing)
@@ -228,12 +230,11 @@ int gradualEnemiesMove(std::vector<Enemy>& enemies, int row) {
         }
     }
 
-    return row + 1;
+    return row + 1;                                                                         // Next move will be on the next row
 }
 
 // Draw enemies related objectes
 void enemiesDrawManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets, std::array<Enemy*, 55>& eny) {
-
 
     for (auto& enemy : enemies) {
         enemy.draw();
@@ -257,17 +258,16 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
     else
         enemyCurrentDirection = Movement::RIGHT;
 
-    enemiesMatrix.fill(1);
-    currRowEnemies = 1;
-
-    enemyShouldMove = false;
-    SPEED = 50;
-    framesCounter = 0;
     finishScreen = 0;
+    enemiesMatrix.fill(1);
+    SPEED = 50;
+    
+    currRowEnemies = 1;
+    enemyShouldMove = false;
     state = 0;
-
     textState = 0;
     textFramesCounter = 0;
+    framesCounter = 0;
 }
 
 // Gameplay Screen Update logic
@@ -311,9 +311,9 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
 
     playerUpdateManager(player, playerBullets, enemyBullets, enemies, eny);
 
+    // Retractable text managment
     if (textState > 0)
         textFramesCounter++;
-
     if (textFramesCounter == 100) {
         textState = false;
         textFramesCounter = 0;
@@ -354,7 +354,7 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
     DrawText("Movement: \tW - A\nShot: \tSPACE", 25, 30, 18, MAROON);
     DrawFPS(GetScreenWidth() - 100, 10);
 
-    // Text cases on keyboard events
+    // Text cases based on keyboard events
     switch (textState)
     {
         int aux;
