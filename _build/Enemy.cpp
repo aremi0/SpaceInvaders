@@ -12,15 +12,14 @@ Enemy::Enemy(Texture2D enemy_t1, Texture2D enemy_t2, Texture2D enemyExploding_t,
 
 // Data init
 	//this->resistence = 1;
-	this->direction = +1;
+	this->direction = +1;																// RIGHT
 	this->type = type;
 	this->exploding = false;
 
-	this->margin = this->enemy_T1.width + (GetScreenWidth() * 0.01);					 // Margin equal texture width + 1% of the screen width
 	this->gridX = x;
 	this->gridY = y;
-	this->position.x = margin * this->gridX;
-	this->position.y = SCREEN_HEIGHT_MARGIN * this->gridY;
+	this->position.x = this->enemy_T1.width + (GetScreenWidth() * 0.075) * this->gridX;
+	this->position.y = this->enemy_T1.height + (GetScreenWidth() * 0.06) * this->gridY;	//... Setting a margin for each enemy
 }
 
 void Enemy::move(float frameTime, bool goDown) {

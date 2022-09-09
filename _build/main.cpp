@@ -40,6 +40,7 @@ Sound fxEnemyExplosion = { 0 };
 std::vector<Enemy> enemies;
 std::vector<Bullet> enemyBullets;
 
+//std::array<Enemy, 55> eny(); // Matrix 11x5 builded with <array>
 
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
@@ -101,9 +102,21 @@ int main(void)
     player = new Player(allTexture.at(TextureIndexes::PLAYER_T));
 
     // First Row of enemies...
-    for (int i = 1; i <= MAX_ENEMIES_COLUMN; i++) {
+    for (int x = 1; x <= MAX_ENEMIES_COLUMN; x++) {
         enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
-                                allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), i, 1, EnemyType::SQUID));
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 1, EnemyType::SQUID));
+
+        enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_CRAB_1_T), allTexture.at(TextureIndexes::ENEMY_CRAB_2_T),
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 2, EnemyType::CRAB));
+
+        enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_CRAB_1_T), allTexture.at(TextureIndexes::ENEMY_CRAB_2_T),
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 3, EnemyType::CRAB));
+
+        enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_OCTOPUS_1_T), allTexture.at(TextureIndexes::ENEMY_OCTOPUS_2_T),
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 4, EnemyType::OCTOPUS));
+
+        enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_OCTOPUS_1_T), allTexture.at(TextureIndexes::ENEMY_OCTOPUS_2_T),
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 5, EnemyType::OCTOPUS));
     }
     
 
@@ -311,7 +324,7 @@ static void ChangeToScreen(GameScreen screen)
     {
         case LOGO: InitLogoScreen(); break;
         case TITLE: InitTitleScreen(); break;
-        case GAMEPLAY: InitGameplayScreen(); break;
+        case GAMEPLAY: InitGameplayScreen(enemies); break;
         case ENDING: InitEndingScreen(); break;
         default: break;
     }
@@ -358,7 +371,7 @@ static void UpdateTransition(void)
             {
                 case LOGO: InitLogoScreen(); break;
                 case TITLE: InitTitleScreen(); break;
-                case GAMEPLAY: InitGameplayScreen(); break;
+                case GAMEPLAY: InitGameplayScreen(enemies); break;
                 case ENDING: InitEndingScreen(); break;
                 default: break;
             }

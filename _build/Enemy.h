@@ -13,7 +13,6 @@ public:
 	EnemyType type;
 	int direction;
 
-	float margin;
 	int gridX;								// ...*
 	int gridY;								// *... Postation on the enemy-grid (first, second, third, ...)
 	Position position;						// Absolute position on the screen.

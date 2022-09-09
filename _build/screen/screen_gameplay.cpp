@@ -17,10 +17,13 @@
 static int framesCounter = 0;
 static int finishScreen = 0;
 int state = 0;
-bool writeState = 0;
+int SPEED = 50;
+
+bool writeState = false;
+static int writeFramesCounter = 0;
 
 // Animation
-Movement enemyCurrentDirection = Movement::RIGHT;
+Movement enemyCurrentDirection;
 std::vector<Bullet> playerBulletsExplAnim;                          // Container of player's exploding bullets
 std::vector<Enemy> enemyExplAnim;                                   // Container of exploding enemies
 
@@ -145,6 +148,8 @@ void enemiesUpdateManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enem
     //----------------------------------------------------------------------------------
     if (!enemies.empty()) {
 
+        printf("___0-0_enemy____enemy_<x:%d><y:%d>__________\n", (int)enemies.begin()->position.x, (int)enemies.begin()->position.x);
+
         if (enemyCurrentDirection == Movement::LEFT) { // Going to LEFT and...
             if (enemies.begin()->position.x <= SCREEN_WIDTH_MARGIN) { // ...i'm alredy out of margin...
                 for (auto& enemy : enemies) { // ...go down and invert movement direction
@@ -174,9 +179,6 @@ void enemiesUpdateManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enem
             }
         }
     }
-
-
-
 }
 
 // Draw enemies related objectes
@@ -197,29 +199,74 @@ void enemiesDrawManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyB
 //----------------------------------------------------------------------------------
 
 // Gameplay Screen Initialization logic
-void InitGameplayScreen(void)
+void InitGameplayScreen(std::vector<Enemy>& enemies)
 {
     // TODO: Initialize GAMEPLAY screen variables here!
-    enemyCurrentDirection = Movement::RIGHT;
+    if(enemies.begin()->direction == -1)
+        enemyCurrentDirection = Movement::LEFT;
+    else
+        enemyCurrentDirection = Movement::RIGHT;
 
+    SPEED = 50;
     framesCounter = 0;
     finishScreen = 0;
     state = 0;
+
+    writeState = false;
+    writeFramesCounter = 0;
 }
 
 // Gameplay Screen Update logic
 void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies)
 {
     // Press enter or tap to change to ENDING screen
-    if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
+    if (IsKeyPressed(KEY_ENTER))
     {
         finishScreen = 1;
         PlaySound(fxCoin);
     }
 
+    // Press M to mute background music
+    if (IsKeyPressed(KEY_M))
+    {
+        SetMusicVolume(music, 0.0f);
+        PlaySound(fxCoin);
+    }
+
+    // Manually increase/decrease enemies movement speed
+    if (IsKeyPressed(KEY_UP))
+    {
+        writeState = true;
+        SPEED = 10;
+        PlaySound(fxCoin);
+    }
+    if (IsKeyPressed(KEY_DOWN))
+    {
+        writeState = true;
+        SPEED = 50;
+        PlaySound(fxCoin);
+    }
+
     playerUpdateManager(player, playerBullets, enemyBullets, enemies);
 
-    // Speed of enemies
+    if (writeState)
+        writeFramesCounter++;
+
+    if (writeFramesCounter == 100) {
+        writeState = false;
+        writeFramesCounter = 0;
+    }
+
+    //every SPEED frame a enemies movement
+    framesCounter++;
+    if (framesCounter >= SPEED) {
+        enemiesUpdateManager(enemies, enemyBullets);
+        framesCounter = 0;
+    }
+
+
+    // Speed of enemies 
+    /*
     if (state <= 4) { 
         framesCounter++;
 
@@ -243,7 +290,7 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
         }
         else
             writeState = false;
-    }
+    }*/
 
 }
 
@@ -263,8 +310,9 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
     DrawFPS(GetScreenWidth() - 100, 10);
 
     if (writeState) {
-        int aux = MeasureText("state changed => faster", 18);
-        DrawText("state changed => faster", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() / 2, 18, MAROON);
+        int aux = MeasureText("speed changed", 18);
+        DrawText("speed changed", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
+        DrawText("speed changed", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
     }
 }
 
