@@ -40,7 +40,7 @@ Sound fxEnemyExplosion = { 0 };
 std::vector<Enemy> enemies;
 std::vector<Bullet> enemyBullets;
 
-//std::array<Enemy, 55> eny(); // Matrix 11x5 builded with <array>
+std::array<Enemy*, 55> eny; // Matrix 11x5 builded with <array>
 
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
@@ -101,22 +101,47 @@ int main(void)
     //----------------------------------------------------------------------------------
     player = new Player(allTexture.at(TextureIndexes::PLAYER_T));
 
+    /***    Enemies array structure;
+    * 
+    * | [squid][crab][crab][octo][octo] | [squid][crab][crab][octo][octo] | [squid][...] |
+    *       0     1     2    3      4         5     6     7     8     9        10   ...
+    * 
+    * Accessing formula: enemies[column * n_rows + row]
+    */
+    for (int x = 0; x < MAX_ENEMIES_COLUMN; x++) {
+        eny[x * 5 + 0] = new Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 1, EnemyType::SQUID);
+
+        eny[x * 5 + 1] = new Enemy(allTexture.at(TextureIndexes::ENEMY_CRAB_1_T), allTexture.at(TextureIndexes::ENEMY_CRAB_2_T),
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 2, EnemyType::CRAB);
+
+        eny[x * 5 + 2] = new Enemy(allTexture.at(TextureIndexes::ENEMY_CRAB_1_T), allTexture.at(TextureIndexes::ENEMY_CRAB_2_T),
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 2, EnemyType::CRAB);
+
+        eny[x * 5 + 3] = new Enemy(allTexture.at(TextureIndexes::ENEMY_OCTOPUS_1_T), allTexture.at(TextureIndexes::ENEMY_OCTOPUS_2_T),
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 4, EnemyType::OCTOPUS);
+
+        eny[x * 5 + 4] = new Enemy(allTexture.at(TextureIndexes::ENEMY_OCTOPUS_1_T), allTexture.at(TextureIndexes::ENEMY_OCTOPUS_2_T),
+        allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 5, EnemyType::OCTOPUS);
+    }
+
+
     // First Row of enemies...
     for (int x = 1; x <= MAX_ENEMIES_COLUMN; x++) {
         enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
-            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 1, EnemyType::SQUID));
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x, 1, EnemyType::SQUID));
 
         enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_CRAB_1_T), allTexture.at(TextureIndexes::ENEMY_CRAB_2_T),
-            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 2, EnemyType::CRAB));
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x, 2, EnemyType::CRAB));
 
         enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_CRAB_1_T), allTexture.at(TextureIndexes::ENEMY_CRAB_2_T),
-            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 3, EnemyType::CRAB));
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x, 3, EnemyType::CRAB));
 
         enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_OCTOPUS_1_T), allTexture.at(TextureIndexes::ENEMY_OCTOPUS_2_T),
-            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 4, EnemyType::OCTOPUS));
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x, 4, EnemyType::OCTOPUS));
 
         enemies.push_back(Enemy(allTexture.at(TextureIndexes::ENEMY_OCTOPUS_1_T), allTexture.at(TextureIndexes::ENEMY_OCTOPUS_2_T),
-            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 5, EnemyType::OCTOPUS));
+            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x, 5, EnemyType::OCTOPUS));
     }
     
 
@@ -442,7 +467,7 @@ static void UpdateDrawFrame(void)
                 UpdateGameplayScreen(player, enemyBullets, playerBullets, enemies);
 
                 if (FinishGameplayScreen() == 1) TransitionToScreen(ENDING);
-                //else if (FinishGameplayScreen() == 2) TransitionToScreen(TITLE);
+                else if (FinishGameplayScreen() == 2) TransitionToScreen(OPTIONS);
 
             } break;
             case ENDING:

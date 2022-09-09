@@ -19,8 +19,8 @@ static int finishScreen = 0;
 int state = 0;
 int SPEED = 50;
 
-bool writeState = false;
-static int writeFramesCounter = 0;
+int textState = 0;
+int textFramesCounter = 0;
 
 // Animation
 Movement enemyCurrentDirection;
@@ -212,8 +212,8 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
     finishScreen = 0;
     state = 0;
 
-    writeState = false;
-    writeFramesCounter = 0;
+    textState = 0;
+    textFramesCounter = 0;
 }
 
 // Gameplay Screen Update logic
@@ -226,9 +226,17 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
         PlaySound(fxCoin);
     }
 
+    // Press P to change to PAUSE screen
+    if (IsKeyPressed(KEY_P))
+    {
+        finishScreen = 2;
+        PlaySound(fxCoin);
+    }
+
     // Press M to mute background music
     if (IsKeyPressed(KEY_M))
     {
+        textState = 1;
         SetMusicVolume(music, 0.0f);
         PlaySound(fxCoin);
     }
@@ -236,25 +244,25 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
     // Manually increase/decrease enemies movement speed
     if (IsKeyPressed(KEY_UP))
     {
-        writeState = true;
+        textState = 2;
         SPEED = 10;
         PlaySound(fxCoin);
     }
     if (IsKeyPressed(KEY_DOWN))
     {
-        writeState = true;
+        textState = 3;
         SPEED = 50;
         PlaySound(fxCoin);
     }
 
     playerUpdateManager(player, playerBullets, enemyBullets, enemies);
 
-    if (writeState)
-        writeFramesCounter++;
+    if (textState > 0)
+        textFramesCounter++;
 
-    if (writeFramesCounter == 100) {
-        writeState = false;
-        writeFramesCounter = 0;
+    if (textFramesCounter == 100) {
+        textState = false;
+        textFramesCounter = 0;
     }
 
     //every SPEED frame a enemies movement
@@ -263,34 +271,6 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
         enemiesUpdateManager(enemies, enemyBullets);
         framesCounter = 0;
     }
-
-
-    // Speed of enemies 
-    /*
-    if (state <= 4) { 
-        framesCounter++;
-
-        if (framesCounter == 70) { // slow
-            framesCounter = 0;
-            state++;
-            enemiesUpdateManager(enemies, enemyBullets);
-        }
-    }
-    else if (state > 4) { 
-        framesCounter++;
-
-        if (framesCounter % 5 == 0) { // faster
-            framesCounter = 0;
-            state++;
-            enemiesUpdateManager(enemies, enemyBullets);
-        }
-
-        if (state <= 30) {
-            writeState = true;
-        }
-        else
-            writeState = false;
-    }*/
 
 }
 
@@ -309,10 +289,28 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
     DrawText("Movement: \tW - A\nShot: \tSPACE", 25, 30, 18, MAROON);
     DrawFPS(GetScreenWidth() - 100, 10);
 
-    if (writeState) {
-        int aux = MeasureText("speed changed", 18);
-        DrawText("speed changed", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
-        DrawText("speed changed", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
+    // Text cases on keyboard events
+    switch (textState)
+    {
+        int aux;
+
+        case 1:
+            aux = MeasureText("music muted", 18);
+            DrawText("music muted", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
+            break;
+
+        case 2:
+            aux = MeasureText("speed increased", 18);
+            DrawText("speed increased", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
+            break;
+
+        case 3:
+            aux = MeasureText("speed decreased", 18);
+            DrawText("speed decreased", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
+            break;
+
+        default:
+            break;
     }
 }
 
