@@ -18,7 +18,7 @@ static int finishScreen = 0;
 int SPEED;
 int ROWS_SPEED;
 char toastMsg[32];
-std::array<int, 55> enemiesMatrix;
+std::array<int, 55> aliveEnemiesMatrix;
 
 // State flags
 bool musicState = true;
@@ -35,6 +35,19 @@ std::vector<Enemy> enemyExplAnim;                                   // Container
 // Animation frames counter
 int framesCounter = 0;
 int textFramesCounter = 0;
+
+//----------------------------------------------------------------------------------
+// __debug__functions__
+//----------------------------------------------------------------------------------
+void debug_printAlEnMx() {
+    printf("__debug__Alive_Enemies_Matrix__\n");
+    for (int i = 0; i < 5; i++) {
+        printf("%d  %d  %d  %d  %d  %d  %d  %d  %d  %d  %d\n", aliveEnemiesMatrix[i + 0], aliveEnemiesMatrix[i + 5], aliveEnemiesMatrix[i + 10],
+            aliveEnemiesMatrix[i + 15], aliveEnemiesMatrix[i + 20], aliveEnemiesMatrix[i + 25], aliveEnemiesMatrix[i + 30], aliveEnemiesMatrix[i + 35],
+            aliveEnemiesMatrix[i + 40], aliveEnemiesMatrix[i + 45], aliveEnemiesMatrix[i + 50]);
+    }
+    printf("\n");
+}
 
 //----------------------------------------------------------------------------------
 // Player-related functions (player-managing)
@@ -113,7 +126,11 @@ void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std
                 if (CheckCollisionRecs(Rectangle{ enemy->position.x, enemy->position.y, enemy->enemy_T1.width * 1.0f, enemy->enemy_T1.height * 1.0f },
                     Rectangle{ bullet->position.x, bullet->position.y, bullet->bullet_T.width * 1.0f, bullet->bullet_T.height * 1.0f })) {
 
+                    aliveEnemiesMatrix[((enemy->gridX - 1) * 5 + enemy->gridY)-1] = 0;
+
                     printf("___HIT_____enemy_<x:%d><y:%d>__________\n", enemy->gridX, enemy->gridY);
+                    debug_printAlEnMx();
+
                     PlaySound(fxEnemyExplosion);
                     enemyExplAnim.push_back(*enemy->StartExploding());
                     enemy = enemies.erase(enemy);
@@ -263,7 +280,7 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
     std::sprintf(toastMsg, " ");
 
     finishScreen = 0;
-    enemiesMatrix.fill(1);
+    aliveEnemiesMatrix.fill(1);
     SPEED = 50;
     ROWS_SPEED = 8;
     
@@ -374,7 +391,7 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
     DrawText("Movement: \tW - A\nShot: \tSPACE", 25, 30, 18, MAROON);
     DrawFPS(GetScreenWidth() - 100, 10);
 
-    // Text cases based on keyboard events
+    // ToastMsg cases based on keyboard events
     switch (textState) {
         int aux;
 

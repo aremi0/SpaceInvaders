@@ -2,10 +2,6 @@
 #include "Bullet.h"
 
 class EnemyBullet : public Bullet {
-// Moving Animation variables
-	int state;
-	int movingAnimFramesCounter;
-
 // Textures
 	Texture2D eBulletExploding_T;
 
@@ -17,7 +13,7 @@ class EnemyBullet : public Bullet {
 
 // Methods
 	// Richiama costruttore classe base e poi inizializza nuove texture/variabili
-	EnemyBullet(Texture2D enemyB_t1, Texture2D enemyB_t2, Texture2D enemyB_t3, Texture2D enemyB_t4, Texture2D enemyExplodingB_t);
-	void draw(); //Overload from base-class
+	EnemyBullet(Texture2D enemyB_t1, Texture2D enemyB_t2, Texture2D enemyB_t3, Texture2D enemyB_t4, Texture2D enemyExplodingB_t, Position spawn, BulletType type, bool exploding = false);
+	void draw(void); //Overload from base-class
 };
 

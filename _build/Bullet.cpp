@@ -22,7 +22,7 @@ void Bullet::move(Movement direction, float frameTime) {
 	this->speed += 20;
 }
 
-void Bullet::draw() {
+void Bullet::draw(void) {
 	DrawTexture(this->exploding ? this->bulletExplodind_T : this->bullet_T, this->position.x, this->position.y, WHITE);
 }
 
