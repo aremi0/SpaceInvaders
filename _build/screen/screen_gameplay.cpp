@@ -252,6 +252,40 @@ int gradualEnemiesMove(std::vector<Enemy>& enemies, int row) {
     return row + 1;                                                                         // Next move will be on the next row
 }
 
+// Real-time scheduling of an enemy that should shot to the player 
+void AI(float playerX, std::vector<Enemy>& enemies) {
+
+    for (auto enemy = begin(enemies); enemy != end(enemies); enemy++) { // enemy++ da vedere...
+
+        // We are acceptable near to the player => check the column and SHOT
+        if (playerX <= enemy->position.x + 15.0 && playerX >= enemy->position.x - 15.0) {
+
+            int cX = enemy->gridX;
+            int cY = enemy->gridY;
+            int i = 4;
+
+            if (cX * cY == 55)
+                i = 0;
+            else if (cX * cY == 44)
+                i = 1;
+            else if (cX * cY == 33)
+                i = 2;
+            else if (cX * cY == 22)
+                i = 3;
+
+            // Going to the last available enemy of the column
+            while (i > 0 && aliveEnemiesMatrix[(cX - 1) * 5 + (cY - 1) + i] == 0)
+                i--;
+
+            (enemy+=i)->AI_target = true;
+            printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)enemy->position.x);
+            return;
+        }
+
+        enemy->AI_target = false;
+    }
+}
+
 // Draw enemies related objectes
 void enemiesDrawManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets, std::array<Enemy*, 55>& eny) {
 
@@ -348,6 +382,7 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
     }
 
     playerUpdateManager(player, playerBullets, enemyBullets, enemies, eny);
+    AI(player->position.x, enemies);
 
     // Retractable text managment
     if (textState > 0)

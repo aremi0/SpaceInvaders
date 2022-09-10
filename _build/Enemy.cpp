@@ -15,6 +15,7 @@ Enemy::Enemy(Texture2D enemy_t1, Texture2D enemy_t2, Texture2D enemyExploding_t,
 	this->direction = +1;																// RIGHT
 	this->type = type;
 	this->exploding = false;
+	this->AI_target = false;
 
 	this->gridX = x;
 	this->gridY = y;
@@ -43,7 +44,11 @@ void Enemy::draw(void) {
 		DrawTexture(this->movementState ? this->enemy_T1 : this->enemy_T2, this->position.x, this->position.y, WHITE);
 	}
 
-	
+	// If selected by AI to shot the player, draw a rectangle line to evidence it...
+	if (AI_target) {
+		DrawRectangleLines(this->position.x, this->position.y, this->enemy_T1.width, this->enemy_T1.height, RED);
+		DrawLine((this->position.x + this->enemy_T1.width / 2), this->position.y, (this->position.x + this->enemy_T1.width / 2), GetScreenHeight(), YELLOW);
+	}
 }
 
 Enemy* Enemy::StartExploding(void) {

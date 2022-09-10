@@ -9,6 +9,7 @@ public:
 	// Gameplay data
 	//int resistence;
 	//int speed;
+	bool AI_target;
 	bool exploding;
 	EnemyType type;
 	int direction;
