@@ -21,6 +21,7 @@ char toastMsg[32];
 std::array<int, 55> enemiesMatrix;
 
 // State flags
+bool musicState = true;
 int state = 0;
 bool enemyShouldMove = false;
 int textState = 0;
@@ -267,6 +268,7 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
     ROWS_SPEED = 8;
     
     currRowEnemies = 1;
+    musicState = true;
     enemyShouldMove = false;
     state = 0;
     textState = 0;
@@ -294,9 +296,17 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
     // Press M to mute background music
     if (IsKeyPressed(KEY_M))
     {
-        textState = 1;
-        SetMusicVolume(music, 0.0f);
+        if (musicState) {
+            PauseMusicStream(music);
+            textState = 1;
+        }
+        else {
+            ResumeMusicStream(music);
+            textState = 4;
+        }
+
         PlaySound(fxCoin);
+        musicState = !musicState;
     }
 
     // Manually increase/decrease enemies movement speed
@@ -369,8 +379,8 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
         int aux;
 
         case 1:
-            aux = MeasureText("music muted", 18);
-            DrawText("music muted", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
+            aux = MeasureText("music paused", 18);
+            DrawText("music paused", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
             break;
 
         case 2:
@@ -383,6 +393,11 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
             std::sprintf(toastMsg, "speed:\t%d\nrows_speed:\t%d", SPEED, ROWS_SPEED);
             aux = MeasureText(toastMsg, 18);
             DrawText(toastMsg, GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
+            break;
+
+        case 4:
+            aux = MeasureText("music resumed", 18);
+            DrawText("music resumed", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
             break;
 
         default:
