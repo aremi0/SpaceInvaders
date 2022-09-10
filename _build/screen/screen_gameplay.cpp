@@ -18,7 +18,11 @@ static int finishScreen = 0;
 int SPEED;
 int ROWS_SPEED;
 char toastMsg[32];
+
+// Enemies AI
 std::array<int, 55> aliveEnemiesMatrix;
+std::array<int, 11> enemiesColumnsDeathCounter;
+int isAttackerSelected = false;                                               // Allow to AI to select only one enemy per time
 
 // State flags
 bool musicState = true;
@@ -52,6 +56,20 @@ void debug_printAlEnMx() {
 //----------------------------------------------------------------------------------
 // Player-related functions (player-managing)
 //----------------------------------------------------------------------------------
+
+// Determine column status of actually death enemies
+void updateEnemiesColumnsDeathCounter(std::vector<Enemy>& enemies) {
+    for (int x = 0; x < 11; x++) {
+        
+        int y = 4;
+
+        while (y >= 0) {
+            if(aliveEnemiesMatrix[x * 5 + y] == 0)
+                enemiesColumnsDeathCounter[x]++;
+            y--;
+        }
+    }
+}
 
 // Update player related objects before drawing
 void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies, std::array<Enemy*, 55>& eny) {
@@ -127,6 +145,7 @@ void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std
                     Rectangle{ bullet->position.x, bullet->position.y, bullet->bullet_T.width * 1.0f, bullet->bullet_T.height * 1.0f })) {
 
                     aliveEnemiesMatrix[((enemy->gridX - 1) * 5 + enemy->gridY)-1] = 0;
+                    updateEnemiesColumnsDeathCounter(enemies);
 
                     printf("___HIT_____enemy_<x:%d><y:%d>__________\n", enemy->gridX, enemy->gridY);
                     debug_printAlEnMx();
@@ -252,6 +271,7 @@ int gradualEnemiesMove(std::vector<Enemy>& enemies, int row) {
     return row + 1;                                                                         // Next move will be on the next row
 }
 
+/*
 // Real-time scheduling of an enemy that should shot to the player 
 void AI(float playerX, std::vector<Enemy>& enemies) {
 
@@ -277,13 +297,95 @@ void AI(float playerX, std::vector<Enemy>& enemies) {
             while (i > 0 && aliveEnemiesMatrix[(cX - 1) * 5 + (cY - 1) + i] == 0)
                 i--;
 
-            (enemy+=i)->AI_target = true;
+            if (!enemyAI_flag) {
+                (enemy += i)->AI_target = true;
+                enemyAI_flag = true;
+            }
+
             printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)enemy->position.x);
             return;
         }
 
         enemy->AI_target = false;
     }
+
+    enemyAI_flag = false;
+}*/
+
+
+
+/*
+// Real-time scheduling of an enemy that should shot to the player 
+void AI_2(float playerX, std::vector<Enemy>& enemies) {
+
+    if (checkAttackers(playerX, enemies)) {
+
+    }
+
+    int cursor = (enemies.size() - 1) / 2;
+
+    float fixedEn = enemies[cursor].position.x + enemies[cursor].enemy_T1.width / 2;
+
+    int direction = playerX < fixedEn - 15.0 ? -1 : +1;
+
+    while (cursor >= 0 && cursor <= 54) {
+
+        
+        fixedEn = enemies[cursor].position.x + enemies[cursor].enemy_T1.width / 2;
+
+        // We are acceptable near to the player => check the column and SHOT
+        if (playerX <= fixedEn + 15.0 && playerX >= fixedEn - 15.0) {
+
+            if (!enemyAI_flag) {
+                enemies[cursor].AI_target = true;
+                enemyAI_flag = true;
+            }
+
+            printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)fixedEn);
+            return;
+        }
+        else {
+            enemies[cursor].AI_target = false;
+            cursor += direction;
+        }
+            
+
+        
+
+    }
+
+    enemyAI_flag = false;
+}*/
+
+
+// Real-time scheduling of an enemy that should shot to the player 
+void AI_3(float playerX, std::vector<Enemy>& enemies) {
+        
+    for (auto enemy = begin(enemies); enemy != end(enemies); enemy++) {
+
+        int x = enemy->gridX - 1;
+        int offset = 4 - enemiesColumnsDeathCounter[x];
+
+        enemy += offset;
+        float fixedEn = enemy->position.x + enemy->enemy_T1.width / 2;
+
+        // Player is inside range of the current enemy => SHOT
+        if (playerX <= fixedEn + 15.0 && playerX >= fixedEn - 15.0) {
+
+            if (!isAttackerSelected) {
+                enemy->AI_target = true;
+                isAttackerSelected = true;
+            }
+
+            printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)fixedEn);
+            return;
+        }
+
+        enemy->AI_target = false;
+
+    }
+
+    isAttackerSelected = false;
 }
 
 // Draw enemies related objectes
@@ -325,6 +427,9 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
     textState = 0;
     textFramesCounter = 0;
     framesCounter = 0;
+
+    enemiesColumnsDeathCounter.fill(0);
+    isAttackerSelected = false;
 }
 
 // Gameplay Screen Update logic
@@ -382,7 +487,7 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
     }
 
     playerUpdateManager(player, playerBullets, enemyBullets, enemies, eny);
-    AI(player->position.x, enemies);
+    AI_3(player->position.x + player->player_T.width / 2, enemies);
 
     // Retractable text managment
     if (textState > 0)
