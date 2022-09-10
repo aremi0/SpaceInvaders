@@ -20,8 +20,8 @@ int ROWS_SPEED;
 char toastMsg[32];
 
 // Enemies AI
-std::array<int, 55> aliveEnemiesMatrix;
-std::array<int, 11> enemiesColumnsDeathCounter;
+std::array<int, 55> aliveEnemiesMatrix;                                       // 
+std::array<int, 11> enemiesColumnsDeathCounter;                               // Determine column status of actually death enemies
 int isAttackerSelected = false;                                               // Allow to AI to select only one enemy per time
 
 // State flags
@@ -56,20 +56,6 @@ void debug_printAlEnMx() {
 //----------------------------------------------------------------------------------
 // Player-related functions (player-managing)
 //----------------------------------------------------------------------------------
-
-// Determine column status of actually death enemies
-void updateEnemiesColumnsDeathCounter(std::vector<Enemy>& enemies) {
-    for (int x = 0; x < 11; x++) {
-        
-        int y = 4;
-
-        while (y >= 0) {
-            if(aliveEnemiesMatrix[x * 5 + y] == 0)
-                enemiesColumnsDeathCounter[x]++;
-            y--;
-        }
-    }
-}
 
 // Update player related objects before drawing
 void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies, std::array<Enemy*, 55>& eny) {
@@ -144,8 +130,10 @@ void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std
                 if (CheckCollisionRecs(Rectangle{ enemy->position.x, enemy->position.y, enemy->enemy_T1.width * 1.0f, enemy->enemy_T1.height * 1.0f },
                     Rectangle{ bullet->position.x, bullet->position.y, bullet->bullet_T.width * 1.0f, bullet->bullet_T.height * 1.0f })) {
 
-                    aliveEnemiesMatrix[((enemy->gridX - 1) * 5 + enemy->gridY)-1] = 0;
-                    updateEnemiesColumnsDeathCounter(enemies);
+                    // Updates enemies AI structure
+                    aliveEnemiesMatrix[((enemy->gridX - 1) * 5 + enemy->gridY) - 1] = 0;
+                    enemiesColumnsDeathCounter[enemy->gridX - 1]++;
+                    //----------------------------------------------------------------------------------
 
                     printf("___HIT_____enemy_<x:%d><y:%d>__________\n", enemy->gridX, enemy->gridY);
                     debug_printAlEnMx();
