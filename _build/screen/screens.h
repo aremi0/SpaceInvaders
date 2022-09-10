@@ -27,6 +27,7 @@ extern Music music;
 extern Sound fxCoin;
 extern Sound fxBulletShot;
 extern Sound fxEnemyExplosion;
+extern Sound fxEnemyMove;
 
 extern std::vector<Texture2D> allTexture;
 
@@ -65,8 +66,8 @@ int FinishOptionsScreen(void);
 // Gameplay Screen Functions Declaration
 //----------------------------------------------------------------------------------
 void InitGameplayScreen(std::vector<Enemy>& enemies);
-void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies, std::array<Enemy*, 55>& eny);
-void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies, std::array<Enemy*, 55>& eny);
+void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies);
+void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies);
 void UnloadGameplayScreen(void);
 int FinishGameplayScreen(void);
 

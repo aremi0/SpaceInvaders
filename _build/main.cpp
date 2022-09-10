@@ -37,10 +37,9 @@ std::vector<Bullet> playerBullets;
 
 // Enemy-specified resources
 Sound fxEnemyExplosion = { 0 };
+Sound fxEnemyMove = { 0 };
 std::vector<Enemy> enemies;
 std::vector<Bullet> enemyBullets;
-
-std::array<Enemy*, 55> eny; // Matrix 11x5 builded with <array>
 
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
@@ -88,9 +87,10 @@ int main(void)
     fxCoin = LoadSound("resources/coin.wav");
     fxBulletShot = LoadSound("resources/sound/shoot.wav");
     fxEnemyExplosion = LoadSound("resources/sound/invaderkilled.wav");
+    fxEnemyMove = LoadSound("resources/sound/fastinvader1.wav");
     loadAllTextures();
 
-    SetMusicVolume(music, 1.0f);
+    SetMusicVolume(music, 0.5f);
     PlayMusicStream(music);
 
     // Setup and init first screen
@@ -100,25 +100,6 @@ int main(void)
     // Game object's creation
     //----------------------------------------------------------------------------------
     player = new Player(allTexture.at(TextureIndexes::PLAYER_T));
-
-    // Maybe unnecessary
-    for (int x = 0; x < MAX_ENEMIES_COLUMN; x++) {
-        eny[x * 5 + 0] = new Enemy(allTexture.at(TextureIndexes::ENEMY_SQUID_1_T), allTexture.at(TextureIndexes::ENEMY_SQUID_2_T),
-            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 1, EnemyType::SQUID);
-
-        eny[x * 5 + 1] = new Enemy(allTexture.at(TextureIndexes::ENEMY_CRAB_1_T), allTexture.at(TextureIndexes::ENEMY_CRAB_2_T),
-            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 2, EnemyType::CRAB);
-
-        eny[x * 5 + 2] = new Enemy(allTexture.at(TextureIndexes::ENEMY_CRAB_1_T), allTexture.at(TextureIndexes::ENEMY_CRAB_2_T),
-            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 3, EnemyType::CRAB);
-
-        eny[x * 5 + 3] = new Enemy(allTexture.at(TextureIndexes::ENEMY_OCTOPUS_1_T), allTexture.at(TextureIndexes::ENEMY_OCTOPUS_2_T),
-            allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 4, EnemyType::OCTOPUS);
-
-        eny[x * 5 + 4] = new Enemy(allTexture.at(TextureIndexes::ENEMY_OCTOPUS_1_T), allTexture.at(TextureIndexes::ENEMY_OCTOPUS_2_T),
-        allTexture.at(TextureIndexes::ENEMY_EXPLODING_T), x + 1, 5, EnemyType::OCTOPUS);
-    }
-
 
     /***    Enemies array structure;
     *
@@ -176,6 +157,7 @@ int main(void)
     UnloadSound(fxCoin);
     UnloadSound(fxBulletShot);
     UnloadSound(fxEnemyExplosion);
+    UnloadSound(fxEnemyMove);
 
     // Unaload all textures from V-RAM
     for (auto& obj : allTexture)
@@ -464,7 +446,7 @@ static void UpdateDrawFrame(void)
             } break;
             case GAMEPLAY:
             {
-                UpdateGameplayScreen(player, enemyBullets, playerBullets, enemies, eny);
+                UpdateGameplayScreen(player, enemyBullets, playerBullets, enemies);
 
                 if (FinishGameplayScreen() == 1) TransitionToScreen(ENDING);
                 else if (FinishGameplayScreen() == 2) TransitionToScreen(OPTIONS);
@@ -493,7 +475,7 @@ static void UpdateDrawFrame(void)
             case LOGO: DrawLogoScreen(); break;
             case TITLE: DrawTitleScreen(); break;
             case OPTIONS: DrawOptionsScreen(); break;
-            case GAMEPLAY: DrawGameplayScreen(player, enemyBullets, playerBullets, enemies, eny); break;
+            case GAMEPLAY: DrawGameplayScreen(player, enemyBullets, playerBullets, enemies); break;
             case ENDING: DrawEndingScreen(); break;
             default: break;
         }

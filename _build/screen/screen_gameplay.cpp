@@ -58,7 +58,7 @@ void debug_printAlEnMx() {
 //----------------------------------------------------------------------------------
 
 // Update player related objects before drawing
-void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies, std::array<Enemy*, 55>& eny) {
+void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies) {
 
     // Player movement handler with screen limits checker
     //----------------------------------------------------------------------------------
@@ -347,7 +347,7 @@ void AI_2(float playerX, std::vector<Enemy>& enemies) {
 
 
 // Real-time scheduling of an enemy that should shot to the player 
-void AI_3(float playerX, std::vector<Enemy>& enemies) {
+void enemiesAI_3(float playerX, std::vector<Enemy>& enemies) {
         
     for (auto enemy = begin(enemies); enemy != end(enemies); enemy++) {
 
@@ -355,17 +355,17 @@ void AI_3(float playerX, std::vector<Enemy>& enemies) {
         int offset = 4 - enemiesColumnsDeathCounter[x];
 
         enemy += offset;
-        float fixedEn = enemy->position.x + enemy->enemy_T1.width / 2;
+        float enemyX = enemy->position.x + enemy->enemy_T1.width / 2;
 
         // Player is inside range of the current enemy => SHOT
-        if (playerX <= fixedEn + 15.0 && playerX >= fixedEn - 15.0) {
+        if (playerX <= enemyX + 15.0 && playerX >= enemyX - 15.0) {
 
             if (!isAttackerSelected) {
                 enemy->AI_target = true;
                 isAttackerSelected = true;
             }
 
-            printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)fixedEn);
+            printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)enemyX);
             return;
         }
 
@@ -377,7 +377,7 @@ void AI_3(float playerX, std::vector<Enemy>& enemies) {
 }
 
 // Draw enemies related objectes
-void enemiesDrawManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets, std::array<Enemy*, 55>& eny) {
+void enemiesDrawManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets) {
 
     for (auto& enemy : enemies) {
         enemy.draw();
@@ -421,7 +421,7 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
 }
 
 // Gameplay Screen Update logic
-void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies, std::array<Enemy*, 55>& eny)
+void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies)
 {
     // Press enter or tap to change to ENDING screen
     if (IsKeyPressed(KEY_ENTER))
@@ -456,11 +456,14 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
     // Manually increase/decrease enemies movement speed
     if (IsKeyPressed(KEY_UP) && SPEED > 1)
     {
-        if (SPEED == 50)
+        if (SPEED == 50) {
             SPEED = 7;
+            framesCounter = 0;
+        }
         else {
             SPEED = 1;
             ROWS_SPEED = 1;
+            framesCounter = 0;
         }
 
         textState = 2;
@@ -474,8 +477,8 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
         PlaySound(fxCoin);
     }
 
-    playerUpdateManager(player, playerBullets, enemyBullets, enemies, eny);
-    AI_3(player->position.x + player->player_T.width / 2, enemies);
+    playerUpdateManager(player, playerBullets, enemyBullets, enemies);
+    enemiesAI_3(player->position.x + player->player_T.width / 2, enemies);
 
     // Retractable text managment
     if (textState > 0)
@@ -486,8 +489,10 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
     }
     
     // Every SPEED frames all enemies are allowed to move by 1-step
-    if (framesCounter % SPEED == 0)
+    if (framesCounter == SPEED) {
         enemyShouldMove = true;
+        PlaySound(fxEnemyMove);
+    }
 
     // 1-step movement of all enemies is composed by 1 row-per-row movement, that appen every 8 frames
     if (enemyShouldMove && framesCounter % ROWS_SPEED == 0) {
@@ -505,7 +510,7 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
 }
 
 // Gameplay Screen Draw logic
-void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies, std::array<Enemy*, 55>& eny)
+void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies)
 {
     // TODO: Draw GAMEPLAY screen here!
 
@@ -513,7 +518,7 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
     DrawTexture(allTexture.at(TextureIndexes::BACKGROUND_T), 0, 0, WHITE);
 
     playerDrawManager(player, playerBullets);
-    enemiesDrawManager(enemies, enemyBullets, eny);
+    enemiesDrawManager(enemies, enemyBullets);
 
     DrawTextEx(font, "GAMEPLAY SCREEN", Vector2{ 20, 10 }, font.baseSize*1.0f, 4, Color {190, 33, 55, 100});
     DrawText("Movement: \tW - A\nShot: \tSPACE", 25, 30, 18, MAROON);
