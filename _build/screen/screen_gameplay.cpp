@@ -15,7 +15,9 @@
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
 static int finishScreen = 0;
-int SPEED = 50;
+int SPEED;
+int ROWS_SPEED;
+char toastMsg[32];
 std::array<int, 55> enemiesMatrix;
 
 // State flags
@@ -32,7 +34,6 @@ std::vector<Enemy> enemyExplAnim;                                   // Container
 // Animation frames counter
 int framesCounter = 0;
 int textFramesCounter = 0;
-int rowMovEnemyFramesCounter = 0;
 
 //----------------------------------------------------------------------------------
 // Player-related functions (player-managing)
@@ -258,9 +259,12 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
     else
         enemyCurrentDirection = Movement::RIGHT;
 
+    std::sprintf(toastMsg, " ");
+
     finishScreen = 0;
     enemiesMatrix.fill(1);
     SPEED = 50;
+    ROWS_SPEED = 8;
     
     currRowEnemies = 1;
     enemyShouldMove = false;
@@ -296,16 +300,23 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
     }
 
     // Manually increase/decrease enemies movement speed
-    if (IsKeyPressed(KEY_UP))
+    if (IsKeyPressed(KEY_UP) && SPEED > 1)
     {
+        if (SPEED == 50)
+            SPEED = 7;
+        else {
+            SPEED = 1;
+            ROWS_SPEED = 1;
+        }
+
         textState = 2;
-        SPEED = 10;
         PlaySound(fxCoin);
     }
-    if (IsKeyPressed(KEY_DOWN))
+    if (IsKeyPressed(KEY_DOWN) && SPEED != 50)
     {
         textState = 3;
         SPEED = 50;
+        ROWS_SPEED = 8;
         PlaySound(fxCoin);
     }
 
@@ -319,12 +330,12 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
         textFramesCounter = 0;
     }
     
-    // Each SPEED frames all enemies are allowed to moves
+    // Every SPEED frames all enemies are allowed to move by 1-step
     if (framesCounter % SPEED == 0)
         enemyShouldMove = true;
 
-    // If all enemies are allowed to moves then move them row-per-row every 15 frames
-    if (enemyShouldMove && framesCounter % 5 == 0) {
+    // 1-step movement of all enemies is composed by 1 row-per-row movement, that appen every 8 frames
+    if (enemyShouldMove && framesCounter % ROWS_SPEED == 0) {
         currRowEnemies = gradualEnemiesMove(enemies, currRowEnemies);
 
         // If all enemies actually moved then restore the counters
@@ -336,7 +347,6 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
     }
 
     framesCounter++;
-    rowMovEnemyFramesCounter++;
 }
 
 // Gameplay Screen Draw logic
@@ -355,8 +365,7 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
     DrawFPS(GetScreenWidth() - 100, 10);
 
     // Text cases based on keyboard events
-    switch (textState)
-    {
+    switch (textState) {
         int aux;
 
         case 1:
@@ -365,18 +374,21 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
             break;
 
         case 2:
-            aux = MeasureText("speed increased", 18);
-            DrawText("speed increased", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
+            std::sprintf(toastMsg, "speed:\t%d\nrows_speed:\t%d", SPEED, ROWS_SPEED);
+            aux = MeasureText(toastMsg, 18);
+            DrawText(toastMsg, GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
             break;
 
         case 3:
-            aux = MeasureText("speed decreased", 18);
-            DrawText("speed decreased", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
+            std::sprintf(toastMsg, "speed:\t%d\nrows_speed:\t%d", SPEED, ROWS_SPEED);
+            aux = MeasureText(toastMsg, 18);
+            DrawText(toastMsg, GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
             break;
 
         default:
             break;
     }
+
 }
 
 // Gameplay Screen Unload logic
