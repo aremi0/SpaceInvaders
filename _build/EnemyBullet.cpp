@@ -12,6 +12,7 @@ EnemyBullet::EnemyBullet(Texture2D enemyB_t1, Texture2D enemyB_t2, Texture2D ene
 	this->eBulletExploding_T = enemyExplodingB_t;
 }
 
+// TODO asd
 void EnemyBullet::draw(void) {
 
 

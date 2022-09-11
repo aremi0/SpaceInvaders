@@ -43,6 +43,7 @@ int textFramesCounter = 0;
 //----------------------------------------------------------------------------------
 // __debug__functions__
 //----------------------------------------------------------------------------------
+// UNDONE to delete in future
 void debug_printAlEnMx() {
     printf("__debug__Alive_Enemies_Matrix__\n");
     for (int i = 0; i < 5; i++) {
@@ -57,6 +58,7 @@ void debug_printAlEnMx() {
 // Player-related functions (player-managing)
 //----------------------------------------------------------------------------------
 
+// TODO dismantle in more little function that separates tasks
 // Update player related objects before drawing
 void playerUpdateManager(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies) {
 
@@ -174,9 +176,9 @@ void playerDrawManager(Player* player, std::vector<Bullet>& playerBullets) {
 // Enemies-related functions (enemies-managing)
 //----------------------------------------------------------------------------------
 
-// DEPRECATED BY gradualEnemiesMove()
-/*// Update enemies related objects before drawing
-void enemiesUpdateManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets, std::array<Enemy*, 55>& eny) {
+// UNDONE deprecated by gradualEnemiesMove()
+/*
+void enemiesMove(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyBullets) {
 
     // Enemies movement with screen limits checker
     //----------------------------------------------------------------------------------
@@ -216,6 +218,7 @@ void enemiesUpdateManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enem
 }
 */
 
+// Allow enemies to moves gradually row-per-row
 int gradualEnemiesMove(std::vector<Enemy>& enemies, int row) {
     
     // Gradual enemies movement with screen limits checker
@@ -259,6 +262,7 @@ int gradualEnemiesMove(std::vector<Enemy>& enemies, int row) {
     return row + 1;                                                                         // Next move will be on the next row
 }
 
+// UNDONE deprecated by enemiesAI_3
 /*
 // Real-time scheduling of an enemy that should shot to the player 
 void AI(float playerX, std::vector<Enemy>& enemies) {
@@ -298,11 +302,8 @@ void AI(float playerX, std::vector<Enemy>& enemies) {
     }
 
     enemyAI_flag = false;
-}*/
+}
 
-
-
-/*
 // Real-time scheduling of an enemy that should shot to the player 
 void AI_2(float playerX, std::vector<Enemy>& enemies) {
 
@@ -348,7 +349,35 @@ void AI_2(float playerX, std::vector<Enemy>& enemies) {
 
 // Real-time scheduling of an enemy that should shot to the player 
 void enemiesAI_3(float playerX, std::vector<Enemy>& enemies) {
-        
+
+    // HACK enemiesAI
+    /**     DESCRIPTION of the current alghorithm + POSSIBLE UPGRADE
+    * 
+    * Flows the enemies vector offset-per-offset; where offset is calculated as the index of the most exposed enemy (exposed row)
+    * of the current column thanks to enemiesColumnsDeathCounter[].
+    * In total will scan each frame at most 11 enemies. (Less if a column is totally epmty -killed-)
+    * 
+    * This AI can be improved (?) in this way:
+    * - We know player.x
+    * - We know distance from each column (enemy margin = this->enemy_T1.width + (GetScreenWidth() * 0.075) * this->gridX)
+    * 
+    * Starting from the "enemy += offset" we can compare current enemy.x with player.x and:
+    *       
+    *       int columnOffset = 11 - enemy.gridX;
+    * 
+    *       if (player.x <= columnOffset * enemy.margin + 15 && player.x >= enemy.margin * enemy.gridX - 15) // Player is inside the enemies grid
+    *       do  //player is on the right...
+    *           int playerColumn = player.x / enemy.margin                    // This is the index 0 to 10
+    *           int totalJump = (playerColumn+1 - enemy.gridX+1) * 5          // Total enemies to jump (death and alive) if positive => go to right | else go to left
+    *           
+    *           if(aliveEnemiesMatrix[playerColumn * 5 + 1] == 1)             // Check if at least the enemy in the least exposed row (1-row) of the player column is alive     
+    *           do
+    *               int specificJump = totalJump;
+    *               for(int i = enemy.gridX+1; i < playerColumn+1; i++)
+    *                  specificJump -= enemiesColumnsDeathCounter[i]          // specificJump is equal to the total of enemies to jump - the number of deaths till the position
+    * 
+    */
+
     for (auto enemy = begin(enemies); enemy != end(enemies); enemy++) {
 
         int x = enemy->gridX - 1;
@@ -395,7 +424,7 @@ void enemiesDrawManager(std::vector<Enemy>& enemies, std::vector<Bullet>& enemyB
 // Gameplay Screen Initialization logic
 void InitGameplayScreen(std::vector<Enemy>& enemies)
 {
-    // TODO: Initialize GAMEPLAY screen variables here!
+    // Initialize GAMEPLAY screen variables here!
     if(enemies.front().direction == -1)
         enemyCurrentDirection = Movement::LEFT;
     else
@@ -512,7 +541,7 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
 // Gameplay Screen Draw logic
 void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<Bullet>& enemyBullets, std::vector<Enemy>& enemies)
 {
-    // TODO: Draw GAMEPLAY screen here!
+    // Draw GAMEPLAY screen here!
 
     ClearBackground(RAYWHITE);
     DrawTexture(allTexture.at(TextureIndexes::BACKGROUND_T), 0, 0, WHITE);
@@ -559,7 +588,7 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
 // Gameplay Screen Unload logic
 void UnloadGameplayScreen(void)
 {
-    // TODO: Unload GAMEPLAY screen variables here!
+    // Unload GAMEPLAY screen variables here!
 }
 
 // Gameplay Screen should finish?
