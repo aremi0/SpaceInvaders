@@ -207,8 +207,6 @@ void explodingAnimHandler() {
     if (!explodingBulletsAnim.empty()) {
         for (auto bul = begin(explodingBulletsAnim); bul != end(explodingBulletsAnim); ) {
 
-            printf("_|||||__debug__<bul.type:%d><bul.y:%d>\n", bul->type, (int)bul->position.y);
-
             bul->explodingAnimFramesCounter--; // Explosion duration
 
             if (bul->explodingAnimFramesCounter <= 0)

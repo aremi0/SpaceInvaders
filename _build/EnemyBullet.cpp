@@ -13,7 +13,6 @@ EnemyBullet::EnemyBullet(Texture2D enemyB_t1, Texture2D enemyB_t2, Texture2D ene
 	this->eBullet_T4 = enemyB_t4;
 }
 
-// TODO green tint on upper y;
 void EnemyBullet::draw(void) {
 
 	// When enemies's bullets are near player's base they went GREEN

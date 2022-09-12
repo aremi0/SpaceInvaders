@@ -29,7 +29,7 @@ Bullet::Bullet(Texture2D bullet_t, Texture2D bulletExploding_t, Position spawn, 
 		this->power = 300;
 	}
 	else {
-		this->speed = 250;
+		this->speed = 220;
 		this->power = 900;
 	}
 	
