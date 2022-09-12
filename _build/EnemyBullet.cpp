@@ -17,7 +17,7 @@ EnemyBullet::EnemyBullet(Texture2D enemyB_t1, Texture2D enemyB_t2, Texture2D ene
 void EnemyBullet::draw(void) {
 
 	// When enemies's bullets are near player's base they went GREEN
-	Color tint = this->position.y >= GetScreenHeight() * 0.65 ? GREEN : WHITE;
+	Color tint = this->position.y > GetScreenHeight() * 0.65 ? GREEN : WHITE;
 
 	if(exploding)
 		DrawTexture(this->bulletExplodind_T, this->position.x, this->position.y, tint);

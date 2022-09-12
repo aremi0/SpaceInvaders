@@ -140,8 +140,6 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
             index = TextureIndexes::ENEMY_POWERFUL_BULLET_1_T;
         //----------------------------------------------------------------------------------
 
-        printf("___debug__<bul-type:%d>\n", r);
-
         enemiesBullets.push_back(EnemyBullet(allTexture.at(index), allTexture.at(index + 1), allTexture.at(index + 2),
             allTexture.at(index + 3), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
             Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, r));
@@ -190,6 +188,8 @@ void bulletsMovementsHandler(std::vector<Bullet>& playerBullets, std::vector<Ene
 
             bul->move(GetFrameTime()); // Update bullet position
 
+            printf("___debug__<bul.type:%d><bul.y:%d>\n", bul->type, (int)bul->position.y);
+
             if (bul->position.y + bul->eBullet_T1.height >= GetScreenHeight()) { // If the current enemy bullet reach the screen floor => StartExploding()
                 bul->position.y = GetScreenHeight() - bul->bulletExplodind_T.height;
                 explodingBulletsAnim.push_back(*bul->StartExploding());
@@ -206,6 +206,8 @@ void explodingAnimHandler() {
     // FLOOR & ROOF bullets exploding animation
     if (!explodingBulletsAnim.empty()) {
         for (auto bul = begin(explodingBulletsAnim); bul != end(explodingBulletsAnim); ) {
+
+            printf("_|||||__debug__<bul.type:%d><bul.y:%d>\n", bul->type, (int)bul->position.y);
 
             bul->explodingAnimFramesCounter--; // Explosion duration
 
