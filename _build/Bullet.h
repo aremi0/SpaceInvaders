@@ -23,7 +23,7 @@ public:
 // Methods
 //----------------------------------------------------------------------------------
 	Bullet(Texture2D bullet_t, Texture2D bulletExploding_t, Position spawn, BulletType type, bool exploding = false);
-	void move(Movement direction, float frameTime);
+	void move(float frameTime);
 	void draw(void);
 	Bullet* StartExploding(void);
 };

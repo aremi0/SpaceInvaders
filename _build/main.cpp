@@ -39,7 +39,7 @@ std::vector<Bullet> playerBullets;
 Sound fxEnemyExplosion = { 0 };
 Sound fxEnemyMove = { 0 };
 std::vector<Enemy> enemies;
-std::vector<Bullet> enemyBullets;
+std::vector<EnemyBullet> enemiesBullets;
 
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
@@ -446,7 +446,7 @@ static void UpdateDrawFrame(void)
             } break;
             case GAMEPLAY:
             {
-                UpdateGameplayScreen(player, enemyBullets, playerBullets, enemies);
+                UpdateGameplayScreen(player, playerBullets, enemiesBullets, enemies);
 
                 if (FinishGameplayScreen() == 1) TransitionToScreen(ENDING);
                 else if (FinishGameplayScreen() == 2) TransitionToScreen(OPTIONS);
@@ -475,7 +475,7 @@ static void UpdateDrawFrame(void)
             case LOGO: DrawLogoScreen(); break;
             case TITLE: DrawTitleScreen(); break;
             case OPTIONS: DrawOptionsScreen(); break;
-            case GAMEPLAY: DrawGameplayScreen(player, enemyBullets, playerBullets, enemies); break;
+            case GAMEPLAY: DrawGameplayScreen(player, playerBullets, enemiesBullets, enemies); break;
             case ENDING: DrawEndingScreen(); break;
             default: break;
         }
