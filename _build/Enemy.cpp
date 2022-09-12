@@ -25,7 +25,7 @@ Enemy::Enemy(Texture2D enemy_t1, Texture2D enemy_t2, Texture2D enemyExploding_t,
 
 void Enemy::move(float frameTime, bool goDown) {
 	if (goDown) {
-		this->position.y += 10;
+		this->position.y += GetScreenHeight() * 0.025;
 		this->direction *= -1;
 	}
 	else {

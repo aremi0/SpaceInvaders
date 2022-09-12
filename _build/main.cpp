@@ -187,21 +187,18 @@ int loadAllTextures(void) {
 //----------------------------------------------------------------------------------
     // PLAYER
     image = LoadImage("resources/img/player/player.png");
-    ImageColorTint(&image, GREEN);
     texture = LoadTextureFromImage(image);
     allTexture.push_back(texture);                                                      // PLAYER_T => index 1
     UnloadImage(image);
 
     // PLAYER_EXPLODING_1
     image = LoadImage("resources/img/player/player_exploding_1.png");
-    ImageColorTint(&image, GREEN);
     texture = LoadTextureFromImage(image);
     allTexture.push_back(texture);                                                      // PLAYER_EXPLODING_1_T => index 2
     UnloadImage(image);
 
     // PLAYER_EXPLODING_2
     image = LoadImage("resources/img/player/player_exploding_2.png");
-    ImageColorTint(&image, GREEN);
     texture = LoadTextureFromImage(image);
     allTexture.push_back(texture);                                                      // PLAYER_EXPLODING_2_T => index 2
     UnloadImage(image);
@@ -214,7 +211,6 @@ int loadAllTextures(void) {
 
     // PLAYER_BULLET_EXPLODING
     image = LoadImage("resources/img/player/bullet/player_bullet_exploding.png");
-    ImageColorTint(&image, RED);
     texture = LoadTextureFromImage(image);
     allTexture.push_back(texture);                                                      // PLAYER_BULLET_EXPLODING_T => index 5
     UnloadImage(image);
@@ -229,14 +225,12 @@ int loadAllTextures(void) {
 
     // ENEMY_UFO
     image = LoadImage("resources/img/enemies/0_UFO_Boss/ufo.png");
-    ImageColorTint(&image, RED);
     texture = LoadTextureFromImage(image);
     allTexture.push_back(texture);                                                      // ENEMY_UFO_T => index 7
     UnloadImage(image);
 
     // ENEMY_UFO_EXPLODING
     image = LoadImage("resources/img/enemies/0_UFO_Boss/ufo_exploding.png");
-    ImageColorTint(&image, RED);
     texture = LoadTextureFromImage(image);
     allTexture.push_back(texture);                                                      // ENEMY_UFO_T => index 8
     UnloadImage(image);
@@ -277,34 +271,82 @@ int loadAllTextures(void) {
     allTexture.push_back(texture);                                                      // ENEMY_OCTOPUS_2_T => index 14
     UnloadImage(image);
 
-    // EMENY_BULLET_1
-    image = LoadImage("resources/img/enemies/bullet/enemy_bullet_1.png");
+    // ENEMY_BULLET_EXPLODING
+    image = LoadImage("resources/img/enemies/enemy_bullet_exploding.png");
     texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // ENEMY_BULLET_1_T => index 15
+    allTexture.push_back(texture);                                                      // ENEMY_BULLET_EXPLODING_T => index 15
     UnloadImage(image);
 
-    // EMENY_BULLET_2
-    image = LoadImage("resources/img/enemies/bullet/enemy_bullet_2.png");
+    // ENEMY_SLOW_BULLET_1
+    image = LoadImage("resources/img/enemies/slower_bullet/squig1.png");
     texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // ENEMY_BULLET_2_T => index 16
+    allTexture.push_back(texture);                                                      // ENEMY_SLOW_BULLET_1_T => index 16
     UnloadImage(image);
 
-    // EMENY_BULLET_3
-    image = LoadImage("resources/img/enemies/bullet/enemy_bullet_3.png");
+    // ENEMY_SLOW_BULLET_2
+    image = LoadImage("resources/img/slower_bullet/squig2.png");
     texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // ENEMY_BULLET_3_T => index 17
+    allTexture.push_back(texture);                                                      // ENEMY_SLOW_BULLET_2_T => index 17
     UnloadImage(image);
 
-    // EMENY_BULLET_4
-    image = LoadImage("resources/img/enemies/bullet/enemy_bullet_4.png");
+    // ENEMY_SLOW_BULLET_3
+    image = LoadImage("resources/img/enemies/slower_bullet/squig3.png");
     texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // ENEMY_BULLET_4_T => index 18
+    allTexture.push_back(texture);                                                      // ENEMY_SLOW_BULLET_3_T => index 18
     UnloadImage(image);
 
-    // EMENY_BULLET_EXPLODING
-    image = LoadImage("resources/img/enemies/bullet/enemy_bullet_exploding.png");
+    // ENEMY_SLOW_BULLET_4
+    image = LoadImage("resources/img/enemies/slower_bullet/squig4.png");
     texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // ENEMY_BULLET_EXPLODING_T => index 19
+    allTexture.push_back(texture);                                                      // ENEMY_SLOW_BULLET_4_T => index 19
+    UnloadImage(image);
+
+    // ENEMY_FASTER_BULLET_1
+    image = LoadImage("resources/img/enemies/faster_bullet/rolling1.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // EMENY_FASTER_BULLET_1_T => index 20
+    UnloadImage(image);
+
+    // ENEMY_FASTER_BULLET_2
+    image = LoadImage("resources/img/enemies/faster_bullet/rolling2.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_FASTER_BULLET_2_T => index 21
+    UnloadImage(image);
+
+    // ENEMY_FASTER_BULLET_3
+    image = LoadImage("resources/img/enemies/faster_bullet/rolling3.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_FASTER_BULLET_3_T => index 22
+    UnloadImage(image);
+
+    // ENEMY_FASTER_BULLET_4
+    image = LoadImage("resources/img/enemies/faster_bullet/rolling4.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // EMEMY_FASTER_BULLET_4_T => index 23
+    UnloadImage(image);
+
+    // ENEMY_POWERFUL_BULLET_1
+    image = LoadImage("resources/img/enemies/powerful_bullet/plunger1.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_POWERFUL_BULLET_1_T => index 24
+    UnloadImage(image);
+
+    // ENEMY_POWERFUL_BULLET_2
+    image = LoadImage("resources/img/enemies/powerful_bullet/plunger2.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_POWERFUL_BULLET_2_T => index 25
+    UnloadImage(image);
+
+    // ENEMY_POWERFUL_BULLET_3
+    image = LoadImage("resources/img/enemies/powerful_bullet/plunger3.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_POWERFUL_BULLET_3_T => index 26
+    UnloadImage(image);
+
+    // ENENY_POWERFUL_BULLET_4
+    image = LoadImage("resources/img/enemies/powerful_bullet/plunger4.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // ENEMY_POWERFUL_BULLET_4_T => index 27
     UnloadImage(image);
 
     return 1;

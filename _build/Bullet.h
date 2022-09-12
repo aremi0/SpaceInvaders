@@ -11,6 +11,7 @@ public:
 	bool exploding;
 	Position position;
 	BulletType type;
+	int power;
 
 	// Animation data
 	int explodingAnimFramesCounter;

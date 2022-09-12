@@ -5,6 +5,7 @@ class EnemyBullet : public Bullet {
 public:
 // Data
 	unsigned movementState;
+	bool isGreen;
 
 // Textures
 	// Moving Animation Texture
@@ -16,6 +17,7 @@ public:
 // Methods
 	// Richiama costruttore classe base e poi inizializza nuove texture/variabili
 	EnemyBullet(Texture2D enemyB_t1, Texture2D enemyB_t2, Texture2D enemyB_t3, Texture2D enemyB_t4, Texture2D enemyExplodingB_t, Position spawn, BulletType type, bool exploding = false);
+	Color checkColor(void);
 	void draw(void); //Overload from base-class
 	void move(float frameTime);
 };

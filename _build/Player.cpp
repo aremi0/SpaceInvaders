@@ -30,5 +30,5 @@ void Player::move(Movement direction, float frameTime) {
 }
 
 void Player::draw(void) {
-	DrawTexture(this->exploding ? this->playerExploding_T : this->player_T, this->position.x, this->position.y, WHITE);
+	DrawTexture(this->exploding ? this->playerExploding_T : this->player_T, this->position.x, this->position.y, GREEN);
 }

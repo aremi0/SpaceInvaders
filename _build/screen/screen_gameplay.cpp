@@ -10,6 +10,7 @@
 #include "raylib.h"
 #include "screens.h"
 #include <iostream>
+#include <random>
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
@@ -121,9 +122,29 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
     // Press TAB to let enemy_AI shot a bullet
     if (IsKeyPressed(KEY_TAB) && isAttackerSelected)
     {
-        enemiesBullets.push_back(EnemyBullet(allTexture.at(TextureIndexes::ENEMY_BULLET_1_T), allTexture.at(TextureIndexes::ENEMY_BULLET_2_T), allTexture.at(TextureIndexes::ENEMY_BULLET_3_T),
-            allTexture.at(TextureIndexes::ENEMY_BULLET_4_T), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
-            Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, BulletType::ENEMY_BULLET));
+        // HACK when AI will be more sofisticated will be selected enemies bullet type based on the target (player => faster || bunker => powerful)
+        //----------------------------------------------------------------------------------
+        // Randomly selecting a enemy bullet type
+        std::random_device dev;
+        std::mt19937 rng(dev());
+        std::uniform_int_distribution<std::mt19937::result_type> genRand(BulletType::SLOWER_BULLET, BulletType::POWERFUL_BULLET);
+
+        BulletType r = static_cast<BulletType> (genRand(rng));
+        int index = -1;
+
+        if (r == BulletType::SLOWER_BULLET)
+            index = TextureIndexes::ENEMY_SLOW_BULLET_1_T;
+        else if (r == BulletType::FASTER_BULLET)
+            index = TextureIndexes::ENEMY_FASTER_BULLET_1_T;
+        else
+            index = TextureIndexes::ENEMY_POWERFUL_BULLET_1_T;
+        //----------------------------------------------------------------------------------
+
+        printf("___debug__<bul-type:%d>\n", r);
+
+        enemiesBullets.push_back(EnemyBullet(allTexture.at(index), allTexture.at(index + 1), allTexture.at(index + 2),
+            allTexture.at(index + 3), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
+            Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, r));
 
         PlaySound(fxCoin);
     }
@@ -416,7 +437,7 @@ Enemy* enemiesAI_3(float playerX, std::vector<Enemy>& enemies) {
                 isAttackerSelected = true;
             }
 
-            printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)enemyX);
+            //printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)enemyX);
             return enemy._Ptr;
         }
 
