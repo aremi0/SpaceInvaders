@@ -25,7 +25,7 @@ Bullet::Bullet(Texture2D bullet_t, Texture2D bulletExploding_t, Position spawn, 
 		this->power = 200;
 	}
 	else if (type == BulletType::FASTER_BULLET) {
-		this->speed = 280;
+		this->speed = FASTER;
 		this->power = 300;
 	}
 	else {

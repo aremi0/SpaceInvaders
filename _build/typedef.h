@@ -4,6 +4,7 @@
 // Strutture e macro di supporto, utili in più screen_view e classi
 //----------------------------------------------------------------------------------
 
+#define FASTER 280
 #define MAX_PLAYER_BULLETS 2
 #define PLAYER_SPAWNPOINT 90
 #define MAX_ENEMIES_COLUMN 11

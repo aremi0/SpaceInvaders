@@ -12,6 +12,8 @@
 #include <iostream>
 #include <random>
 
+#define AI_REFRESH_RATE 10
+
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
@@ -27,8 +29,14 @@ int enemiesBulletsCounter;
 // Enemies AI
 std::array<int, 55> aliveEnemiesMatrix;                                       // 
 std::array<int, 11> enemiesColumnsDeathCounter;                               // Determine column status of actually death enemies
-//int isAttackerSelected;                                                       // Allows AI to select only one enemy per time
+//int isAttackerSelected;                                                     // Allows AI to select only one enemy per time
 Enemy* attacker;
+
+// AI predictive strategy variables
+int AI_framesCounter;
+float currPl_x;
+float nextPl_x;
+char AI_text[3][16];
 
 // State flags
 bool musicState = true;
@@ -39,7 +47,7 @@ int textState = 0;
 // Animation
 int currRowEnemies = 1;
 Movement enemyCurrentDirection;
-std::vector<Bullet> explodingBulletsAnim;                          // Container of player's exploding bullets
+std::vector<Bullet> explodingBulletsAnim;                                  // Container of player's exploding bullets
 std::vector<Enemy> explodingEnemiesAnim;                                   // Container of exploding enemies
 
 // Animation frames counter
@@ -189,7 +197,7 @@ void bulletsMovementsHandler(std::vector<Bullet>& playerBullets, std::vector<Ene
 
             bul->move(GetFrameTime()); // Update bullet position
 
-            printf("___debug__<bul.type:%d><bul.y:%d>\n", bul->type, (int)bul->position.y);
+            //printf("___debug__<bul.type:%d><bul.y:%d>\n", bul->type, (int)bul->position.y);
 
             if (bul->position.y + bul->eBullet_T1.height >= GetScreenHeight()) { // If the current enemy bullet reach the screen floor => StartExploding()
                 bul->position.y = GetScreenHeight() - bul->bulletExplodind_T.height;
@@ -276,13 +284,14 @@ void updateManager(Player* player, std::vector<Bullet>& playerBullets, std::vect
 // Manage all text to draw
 void textHandler() {
 
+    int aux = 0;
+
     //DrawTextEx(font, "GAMEPLAY SCREEN", Vector2{ 20, 10 }, font.baseSize * 1.0f, 4, Color{ 190, 33, 55, 100 });
     //DrawText("Movement: \tW - A\nShot: \tSPACE", 25, 30, 18, MAROON);
     DrawFPS(GetScreenWidth() - 100, 10);
 
     // ToastMsg cases based on keyboard events
     switch (textState) {
-        int aux;
 
     case 1:
         aux = MeasureText("music paused", 18);
@@ -307,7 +316,13 @@ void textHandler() {
         break;
     }
 
+    // PersistentMsg
+    aux = MeasureText(staticMsg, 14);
+    std::sprintf(staticMsg, "__debug_AI\n\tplayer is \n\tstrategy: \n\tplayer.x: ");
+    DrawText(staticMsg, GetScreenWidth() - 170, GetScreenHeight() * 0.85, 13, RED);
 
+    std::sprintf(staticMsg, "\t%s\n\t%s\n\t%s", AI_text[0], AI_text[1], AI_text[2]);
+    DrawText(staticMsg, GetScreenWidth() - 100, GetScreenHeight() * 0.88, 13, AI_text[0][0] == 'm' ? PURPLE : YELLOW);
 }
 
 // Handle all elements to draw
@@ -393,36 +408,7 @@ int gradualEnemiesMove(std::vector<Enemy>& enemies, int row) {
     return row + 1;                                                                         // Next move will be on the next row
 }
 
-// Real-time scheduling of an enemy that should shot to the player 
-Enemy* enemiesAI_3(float playerX, std::vector<Enemy>& enemies) {
-
-    // HACK enemiesAI
-    /**     DESCRIPTION of the current alghorithm + POSSIBLE UPGRADE
-    * 
-    * Flows the enemies vector offset-per-offset; where offset is calculated as the index of the most exposed enemy (exposed row)
-    * of the current column thanks to enemiesColumnsDeathCounter[].
-    * In total will scan each frame at most 11 enemies. (Less if a column is totally epmty -killed-)
-    * 
-    * This AI can be improved (?) in this way:
-    * - We know player.x
-    * - We know distance from each column (enemy margin = this->enemy_T1.width + (GetScreenWidth() * 0.075) * this->gridX)
-    * 
-    * Starting from the "enemy += offset" we can compare current enemy.x with player.x and:
-    *       
-    *       int columnOffset = 11 - enemy.gridX;
-    * 
-    *       if (player.x <= columnOffset * enemy.margin + 15 && player.x >= enemy.margin * enemy.gridX - 15) // Player is inside the enemies grid
-    *       do  //player is on the right...
-    *           int playerColumn = player.x / enemy.margin                    // This is the index 0 to 10
-    *           int totalJump = (playerColumn+1 - enemy.gridX+1) * 5          // Total enemies to jump (death and alive) if positive => go to right | else go to left
-    *           
-    *           if(aliveEnemiesMatrix[playerColumn * 5 + 1] == 1)             // Check if at least the enemy in the least exposed row (1-row) of the player column is alive     
-    *           do
-    *               int specificJump = totalJump;
-    *               for(int i = enemy.gridX+1; i < playerColumn+1; i++)
-    *                  specificJump -= enemiesColumnsDeathCounter[i]          // specificJump is equal to the total of enemies to jump - the number of deaths till the position
-    * 
-    */
+Enemy* static_AI(float playerX, std::vector<Enemy>& enemies) {
 
     for (auto enemy = begin(enemies); enemy != end(enemies); enemy++) {
 
@@ -432,11 +418,15 @@ Enemy* enemiesAI_3(float playerX, std::vector<Enemy>& enemies) {
         enemy += offset;
         float enemyX = enemy->position.x + enemy->enemy_T1.width / 2;
 
+        std::sprintf(AI_text[2], "%s", "out_of_range");
+
         // Player is inside range of the current enemy => SHOT
         if (playerX <= enemyX + 15.0 && playerX >= enemyX - 15.0) {
 
-            //printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)enemyX
             enemy->AI_target = true;
+
+            std::sprintf(AI_text[2], "%d", (int)playerX);
+
             return enemy._Ptr;
         }
 
@@ -445,6 +435,84 @@ Enemy* enemiesAI_3(float playerX, std::vector<Enemy>& enemies) {
     }
 
     return nullptr;
+}
+
+Enemy* predictive_AI(Player* player, std::vector<Enemy>& enemies, int direction) {
+
+    /**
+    * 1. get a starting based on playerDirection enemy.x position
+    *   => to left = begin
+    *   => to right = end
+    * 2. calculate player.x in 5 frame forward
+    * 3. calculate how many column skip starting from the enemy chosed
+    * 4. 
+    */
+
+    float frameTime = GetFrameTime();
+
+    for (auto enemy = begin(enemies); enemy != end(enemies); enemy++) {
+
+        int x = enemy->gridX - 1;
+        int offset = 4 - enemiesColumnsDeathCounter[x];
+        enemy += offset;
+        enemy->AI_target = false;
+
+        float enemyX = enemy->position.x + enemy->enemy_T1.width / 2;
+
+        float framesBullet = ((player->position.y + 3) - (enemy->position.y + allTexture.at(ENEMY_FASTER_BULLET_1_T).height)) / (FASTER * frameTime); // Frames needed to a bullet to reach player.y
+        float predictive_x = nextPl_x + (player->speed * frameTime * framesBullet * direction);
+
+        std::sprintf(AI_text[2], "%s", "out_of_range");
+
+        // Player will be inside range of this enemy => PREVENTIVE SHOT
+        if (predictive_x <= enemyX + 19.0 && predictive_x >= enemyX - 19.0) {
+
+            //printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)enemyX);
+            enemy->AI_target = true;
+            std::sprintf(AI_text[2], "%d", (int)predictive_x);
+            return enemy._Ptr;
+        }
+    }
+
+    return nullptr;
+}
+
+// Real-time scheduling of an enemy that should shot to the player 
+Enemy* AI (Player* player, std::vector<Enemy>& enemies, unsigned state) {
+
+    /**
+    * 1. get player's first position.
+    * 2. wait 5 frame
+    * 3. get player's second position.
+    * 4. evaluate if player is still or moving
+    *   5. => still = static_AI()
+    *   5. => moving = predictive_AI()
+    */
+
+    if (state == 0) {
+        currPl_x = player->position.x + player->player_T.width / 2;
+        return attacker;
+    }
+
+    nextPl_x = player->position.x + player->player_T.width / 2;
+
+
+
+    if (nextPl_x < currPl_x) {                          // Player is moving to left
+        std::sprintf(AI_text[0], "moving");
+        std::sprintf(AI_text[1], "predictive");
+        return predictive_AI(player, enemies, -1);
+    }
+    else if (nextPl_x > currPl_x) {                       // Player is moving to right
+        std::sprintf(AI_text[0], "moving");
+        std::sprintf(AI_text[1], "predictive");
+        return predictive_AI(player, enemies, +1);
+    }
+    else {
+        std::sprintf(AI_text[0], "still");
+        std::sprintf(AI_text[1], "static");
+        return static_AI(nextPl_x, enemies);            // Player is still
+    }
 }
 
 //----------------------------------------------------------------------------------
@@ -481,16 +549,40 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
     enemiesColumnsDeathCounter.fill(0);
     //isAttackerSelected = 0;
     attacker = nullptr;
+
+    // Predictive AI initialization
+    AI_framesCounter = AI_REFRESH_RATE;
+    currPl_x = 0.0f;
+    nextPl_x = 0.0f;
+    std::sprintf(AI_text[0], " ");
+    std::sprintf(AI_text[1], " ");
+    std::sprintf(AI_text[2], " ");
 }
 
 // Gameplay Screen Update logic
 void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<EnemyBullet>& enemiesBullets, std::vector<Enemy>& enemies)
 {
 
+
+
     updateManager(player, playerBullets, enemiesBullets, enemies);
 
-    if ((attacker = enemiesAI_3(player->position.x + player->player_T.width / 2, enemies)) == nullptr) {
+    if (AI_framesCounter == AI_REFRESH_RATE) {
+        attacker = AI(player, enemies, 0);
+    }
+    else if (AI_framesCounter == 0) {
+        if (attacker = AI(player, enemies, 1)) {
 
+            enemiesBullets.push_back(EnemyBullet(allTexture.at(ENEMY_FASTER_BULLET_1_T), allTexture.at(ENEMY_FASTER_BULLET_2_T), allTexture.at(ENEMY_FASTER_BULLET_3_T),
+                allTexture.at(ENEMY_FASTER_BULLET_4_T), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
+                Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, BulletType::FASTER_BULLET));
+
+            // TODO uncomment
+            //attacker->AI_target = false;
+            //attacker = nullptr;
+        }
+
+        AI_framesCounter = AI_REFRESH_RATE + 1;
     }
 
     // Retractable text managment
@@ -520,6 +612,7 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
     }
 
     framesCounter++;
+    AI_framesCounter--;
 }
 
 // Gameplay Screen Draw logic

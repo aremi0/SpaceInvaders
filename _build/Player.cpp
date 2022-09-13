@@ -10,7 +10,7 @@ Player::Player(Texture2D player_t) {
 // Data init
 	this->hardReset();
 	this->position.y = GetScreenHeight() - SCREEN_HEIGHT_MARGIN;
-	this->speed = 300;
+	this->speed = 150;
 }
 
 // Reset just the variables to start a new wave (next-level)
