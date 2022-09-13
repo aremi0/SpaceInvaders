@@ -18,7 +18,8 @@
 static int finishScreen = 0;
 int SPEED;                                                                    // Speed of enemies's grid movement
 int ROWS_SPEED;                                                               // Speed of enemies's grid rows
-char toastMsg[32];
+char toastMsg[128];
+char staticMsg[128];
 
 int playerBulletsCounter;
 int enemiesBulletsCounter;
@@ -26,7 +27,7 @@ int enemiesBulletsCounter;
 // Enemies AI
 std::array<int, 55> aliveEnemiesMatrix;                                       // 
 std::array<int, 11> enemiesColumnsDeathCounter;                               // Determine column status of actually death enemies
-int isAttackerSelected = false;                                               // Allows AI to select only one enemy per time
+//int isAttackerSelected;                                                       // Allows AI to select only one enemy per time
 Enemy* attacker;
 
 // State flags
@@ -120,7 +121,7 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
     }
 
     // Press TAB to let enemy_AI shot a bullet
-    if (IsKeyPressed(KEY_TAB) && isAttackerSelected)
+    if (IsKeyPressed(KEY_TAB) && attacker)
     {
         // HACK when AI will be more sofisticated will be selected enemies bullet type based on the target (player => faster || bunker => powerful)
         //----------------------------------------------------------------------------------
@@ -275,7 +276,7 @@ void updateManager(Player* player, std::vector<Bullet>& playerBullets, std::vect
 // Manage all text to draw
 void textHandler() {
 
-    DrawTextEx(font, "GAMEPLAY SCREEN", Vector2{ 20, 10 }, font.baseSize * 1.0f, 4, Color{ 190, 33, 55, 100 });
+    //DrawTextEx(font, "GAMEPLAY SCREEN", Vector2{ 20, 10 }, font.baseSize * 1.0f, 4, Color{ 190, 33, 55, 100 });
     //DrawText("Movement: \tW - A\nShot: \tSPACE", 25, 30, 18, MAROON);
     DrawFPS(GetScreenWidth() - 100, 10);
 
@@ -305,6 +306,8 @@ void textHandler() {
         DrawText("music resumed", GetScreenWidth() / 2 - aux / 2, GetScreenHeight() * 0.85, 18, MAROON);
         break;
     }
+
+
 }
 
 // Handle all elements to draw
@@ -432,12 +435,8 @@ Enemy* enemiesAI_3(float playerX, std::vector<Enemy>& enemies) {
         // Player is inside range of the current enemy => SHOT
         if (playerX <= enemyX + 15.0 && playerX >= enemyX - 15.0) {
 
-            if (!isAttackerSelected) {
-                enemy->AI_target = true;
-                isAttackerSelected = true;
-            }
-
-            //printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)enemyX);
+            //printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)enemyX
+            enemy->AI_target = true;
             return enemy._Ptr;
         }
 
@@ -445,7 +444,7 @@ Enemy* enemiesAI_3(float playerX, std::vector<Enemy>& enemies) {
 
     }
 
-    isAttackerSelected = false;
+    return nullptr;
 }
 
 //----------------------------------------------------------------------------------
@@ -462,6 +461,7 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
         enemyCurrentDirection = Movement::RIGHT;
 
     std::sprintf(toastMsg, " ");
+    std::sprintf(staticMsg, " ");
 
     finishScreen = 0;
     aliveEnemiesMatrix.fill(1);
@@ -479,7 +479,7 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
     framesCounter = 0;
 
     enemiesColumnsDeathCounter.fill(0);
-    isAttackerSelected = false;
+    //isAttackerSelected = 0;
     attacker = nullptr;
 }
 
@@ -488,7 +488,10 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
 {
 
     updateManager(player, playerBullets, enemiesBullets, enemies);
-    attacker = enemiesAI_3(player->position.x + player->player_T.width / 2, enemies);
+
+    if ((attacker = enemiesAI_3(player->position.x + player->player_T.width / 2, enemies)) == nullptr) {
+
+    }
 
     // Retractable text managment
     if (textState > 0)
