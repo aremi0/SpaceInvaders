@@ -1,5 +1,4 @@
 #include "Bullet.h"
-#include "raymath.h"
 
 Bullet::Bullet(Texture2D bullet_t, Texture2D bulletExploding_t, Position spawn, BulletType type, bool exploding) {
 // Texture init
