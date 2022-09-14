@@ -2,24 +2,28 @@
 #include "raylib.h"
 #include "../_build/typedef.h"
 #include "BunkerSlice.h"
+#include "Bullet.h"
+#include <stdio.h>
 
 class Bunker {
 public:
 // Data
 //----------------------------------------------------------------------------------
 	Position spawn;
+	int health;
 
 	// Bunker slices
-	BunkerSlice topLeft;
-	BunkerSlice topCenter;
-	BunkerSlice topRight;
+	BunkerSlice* topLeft;
+	BunkerSlice* topCenter;
+	BunkerSlice* topRight;
 
-	BunkerSlice centerLeft;
-	BunkerSlice centerCenter;
-	BunkerSlice centerRight;
+	BunkerSlice* centerLeft;
+	BunkerSlice* centerCenter;
+	BunkerSlice* centerRight;
 
-	BunkerSlice bottomLeft;
-	BunkerSlice bottomRight;
+	BunkerSlice* bottomLeft;
+	BunkerSlice* bottomRight;
+
 
 // Methods
 //----------------------------------------------------------------------------------
@@ -30,5 +34,6 @@ public:
 			Texture2D bL1, Texture2D bL2, Texture2D bL3, Texture2D bL4,
 			Texture2D bR1, Texture2D bR2, Texture2D bR3, Texture2D bR4);
 
-	void draw();
+	bool collisionDetector(Bullet* bullet);
+	void draw(void);
 };

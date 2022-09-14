@@ -15,6 +15,7 @@
 #include "../_build/Bullet.h"
 #include "../_build/Enemy.h"
 #include "../_build/EnemyBullet.h"
+#include "../_build/Bunker.h"
 
 #ifndef SCREENS_H
 #define SCREENS_H
@@ -67,8 +68,8 @@ int FinishOptionsScreen(void);
 // Gameplay Screen Functions Declaration
 //----------------------------------------------------------------------------------
 void InitGameplayScreen(std::vector<Enemy>& enemies);
-void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<EnemyBullet>& enemiesBullets, std::vector<Enemy>& enemies);
-void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<EnemyBullet>& enemiesBullets, std::vector<Enemy>& enemies);
+void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<EnemyBullet>& enemiesBullets, std::vector<Enemy>& enemies, Bunker* bunker1);
+void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<EnemyBullet>& enemiesBullets, std::vector<Enemy>& enemies, Bunker* bunker1);
 void UnloadGameplayScreen(void);
 int FinishGameplayScreen(void);
 

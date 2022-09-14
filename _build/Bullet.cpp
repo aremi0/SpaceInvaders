@@ -47,7 +47,12 @@ void Bullet::draw(void) {
 	else if (!(this->type == BulletType::PLAYER_BULLET) && (this->position.y > GetScreenHeight() * 0.65))	// Enemies's bullet FLOOR
 		tint = GREEN;
 
-	DrawTexture(this->exploding ? this->bulletExplodind_T : this->bullet_T, this->position.x, this->position.y, tint);
+	if(exploding)
+		DrawTexture(this->bulletExplodind_T, this->position.x - this->bulletExplodind_T.width / 2, this->position.y, this->position.y > GetScreenHeight() * 0.65 ? GREEN : tint);
+	else
+		DrawTexture(this->bullet_T, this->position.x, this->position.y, tint);
+
+	
 }
 
 Bullet* Bullet::StartExploding(void) {

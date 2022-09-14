@@ -30,6 +30,9 @@ Music music = { 0 };
 Sound fxCoin = { 0 };
 std::vector<Texture2D> allTexture;
 
+// Bunker resources
+Bunker* bunker1;
+
 // Player-specified resources
 Sound fxBulletShot = { 0 };
 Player* player = nullptr;
@@ -100,6 +103,15 @@ int main(void)
     // Game object's creation
     //----------------------------------------------------------------------------------
     player = new Player(allTexture.at(TextureIndexes::PLAYER_T));
+
+    int i = TextureIndexes::BUNKER_TOP_LEFT_1_T;
+    bunker1 = new Bunker(Position{ 56, 520 }, allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_2_T),
+        allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_3_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_4_T), allTexture.at(TextureIndexes::BUNKER_CENTER_1_T),
+        allTexture.at(TextureIndexes::BUNKER_CENTER_2_T), allTexture.at(TextureIndexes::BUNKER_CENTER_3_T), allTexture.at(TextureIndexes::BUNKER_CENTER_4_T),
+        allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_2_T), allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_3_T),
+        allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_4_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_2_T),
+        allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_3_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_4_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_1_T),
+        allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_2_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_3_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_4_T));
 
     /***    Enemies array structure;
     *
@@ -429,55 +441,57 @@ int loadAllTextures(void) {
 
     //----------------------------------------------------------------------------------
 
-    // BUNKER_BOTTOM_RIGHT_1
-    image = LoadImage("resources/img/bunker/center-right-0.png");
-    texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_RIGHT_1_T => index 40
-    UnloadImage(image);
-
-    // BUNKER_BOTTOM_RIGHT_2
-    image = LoadImage("resources/img/bunker/center-right-1.png");
-    texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_RIGHT_2_T => index 41
-    UnloadImage(image);
-
-    // BUNKER_BOTTOM_RIGHT_3
-    image = LoadImage("resources/img/bunker/center-right-2.png");
-    texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_RIGHT_3_T => index 42
-    UnloadImage(image);
-
-    // BUNKER_BOTTOM_RIGHT_4
-    image = LoadImage("resources/img/bunker/center-right-3.png");
-    texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_RIGHT_4_T => index 43
-    UnloadImage(image);
-
-    //----------------------------------------------------------------------------------
-
     // BUNKER_BOTTOM_LEFT_1
     image = LoadImage("resources/img/bunker/center-left-0.png");
     texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_LEFT_1_T => index 44
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_LEFT_1_T => index 40
     UnloadImage(image);
 
     // BUNKER_BOTTOM_LEFT_2
     image = LoadImage("resources/img/bunker/center-left-1.png");
     texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_LEFT_2_T => index 45
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_LEFT_2_T => index 41
     UnloadImage(image);
 
     // BUNKER_BOTTOM_LEFT_3
     image = LoadImage("resources/img/bunker/center-left-2.png");
     texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_LEFT_3_T => index 46
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_LEFT_3_T => index 42
     UnloadImage(image);
 
     // BUNKER_BOTTOM_LEFT_4
     image = LoadImage("resources/img/bunker/center-left-3.png");
     texture = LoadTextureFromImage(image);
-    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_LEFT_4_T => index 47
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_LEFT_4_T => index 43
     UnloadImage(image);
+
+    //----------------------------------------------------------------------------------
+
+    // BUNKER_BOTTOM_RIGHT_1
+    image = LoadImage("resources/img/bunker/center-right-0.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_RIGHT_1_T => index 44
+    UnloadImage(image);
+
+    // BUNKER_BOTTOM_RIGHT_2
+    image = LoadImage("resources/img/bunker/center-right-1.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_RIGHT_2_T => index 45
+    UnloadImage(image);
+
+    // BUNKER_BOTTOM_RIGHT_3
+    image = LoadImage("resources/img/bunker/center-right-2.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_RIGHT_3_T => index 46
+    UnloadImage(image);
+
+    // BUNKER_BOTTOM_RIGHT_4
+    image = LoadImage("resources/img/bunker/center-right-3.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_RIGHT_4_T => index 47
+    UnloadImage(image);
+
+
 
     return 1;
 }
@@ -618,7 +632,7 @@ static void UpdateDrawFrame(void)
             } break;
             case GAMEPLAY:
             {
-                UpdateGameplayScreen(player, playerBullets, enemiesBullets, enemies);
+                UpdateGameplayScreen(player, playerBullets, enemiesBullets, enemies, bunker1);
 
                 if (FinishGameplayScreen() == 1) TransitionToScreen(ENDING);
                 else if (FinishGameplayScreen() == 2) TransitionToScreen(OPTIONS);
@@ -647,7 +661,7 @@ static void UpdateDrawFrame(void)
             case LOGO: DrawLogoScreen(); break;
             case TITLE: DrawTitleScreen(); break;
             case OPTIONS: DrawOptionsScreen(); break;
-            case GAMEPLAY: DrawGameplayScreen(player, playerBullets, enemiesBullets, enemies); break;
+            case GAMEPLAY: DrawGameplayScreen(player, playerBullets, enemiesBullets, enemies, bunker1); break;
             case ENDING: DrawEndingScreen(); break;
             default: break;
         }

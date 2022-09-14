@@ -6,7 +6,8 @@ class BunkerSlice {
 public:
 // Data
 //----------------------------------------------------------------------------------
-	int health;
+	int initialHealth;
+	int currentHealth;
 
 // Textures
 //----------------------------------------------------------------------------------
@@ -17,7 +18,6 @@ public:
 
 // Methods
 //----------------------------------------------------------------------------------
-	BunkerSlice();
-	BunkerSlice(Texture2D t1, Texture2D t2, Texture2D t3, Texture2D t4);
-	Texture2D draw();
+	BunkerSlice(int health, Texture2D t1, Texture2D t2, Texture2D t3, Texture2D t4);
+	Texture2D draw(void);
 };
