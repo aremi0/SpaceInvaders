@@ -421,7 +421,7 @@ Enemy* static_AI(float playerX, std::vector<Enemy>& enemies) {
         std::sprintf(AI_text[2], "%s", "out_of_range");
 
         // Player is inside range of the current enemy => SHOT
-        if (playerX <= enemyX + 15.0 && playerX >= enemyX - 15.0) {
+        if (playerX <= enemyX + 12.0 && playerX >= enemyX - 12.0) {
 
             enemy->AI_target = true;
 
