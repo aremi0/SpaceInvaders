@@ -13,6 +13,7 @@
 #include <random>
 
 #define AI_REFRESH_RATE 10
+#define ENEMIES_MAX_SHOT 3
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
@@ -125,34 +126,6 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
         textState = 3;
         SPEED = 50;
         ROWS_SPEED = 8;
-        PlaySound(fxCoin);
-    }
-
-    // Press TAB to let enemy_AI shot a bullet
-    if (IsKeyPressed(KEY_TAB) && attacker)
-    {
-        // HACK when AI will be more sofisticated will be selected enemies bullet type based on the target (player => faster || bunker => powerful)
-        //----------------------------------------------------------------------------------
-        // Randomly selecting a enemy bullet type
-        std::random_device dev;
-        std::mt19937 rng(dev());
-        std::uniform_int_distribution<std::mt19937::result_type> genRand(BulletType::SLOWER_BULLET, BulletType::POWERFUL_BULLET);
-
-        BulletType r = static_cast<BulletType> (genRand(rng));
-        int index = -1;
-
-        if (r == BulletType::SLOWER_BULLET)
-            index = TextureIndexes::ENEMY_SLOW_BULLET_1_T;
-        else if (r == BulletType::FASTER_BULLET)
-            index = TextureIndexes::ENEMY_FASTER_BULLET_1_T;
-        else
-            index = TextureIndexes::ENEMY_POWERFUL_BULLET_1_T;
-        //----------------------------------------------------------------------------------
-
-        enemiesBullets.push_back(EnemyBullet(allTexture.at(index), allTexture.at(index + 1), allTexture.at(index + 2),
-            allTexture.at(index + 3), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
-            Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, r));
-
         PlaySound(fxCoin);
     }
 
@@ -391,7 +364,7 @@ int gradualEnemiesMove(std::vector<Enemy>& enemies, int row) {
     return row + 1;                                                                         // Next move will be on the next row
 }
 
-Enemy* static_AI(float playerX, std::vector<Enemy>& enemies) {
+int static_AI(float playerX, std::vector<Enemy>& enemies) {
 
     for (auto enemy = begin(enemies); enemy != end(enemies); enemy++) {
 
@@ -410,17 +383,19 @@ Enemy* static_AI(float playerX, std::vector<Enemy>& enemies) {
 
             std::sprintf(AI_text[2], "%d", (int)playerX);
 
-            return enemy._Ptr;
+            attacker = enemy._Ptr;
+            return 1;
         }
 
         enemy->AI_target = false;
 
     }
 
-    return nullptr;
+    attacker = nullptr;
+    return 0;
 }
 
-Enemy* predictive_AI(Player* player, std::vector<Enemy>& enemies, int direction) {
+int predictive_AI(Player* player, std::vector<Enemy>& enemies, int direction) {
 
     /**
     * 1. get a starting based on playerDirection enemy.x position
@@ -453,15 +428,17 @@ Enemy* predictive_AI(Player* player, std::vector<Enemy>& enemies, int direction)
             //printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)enemyX);
             enemy->AI_target = true;
             std::sprintf(AI_text[2], "%d", (int)predictive_x);
-            return enemy._Ptr;
+            attacker =  enemy._Ptr;
+            return 2;
         }
     }
 
-    return nullptr;
+    attacker = nullptr;
+    return 0;
 }
 
 // Real-time scheduling of an enemy that should shot to the player 
-Enemy* AI(Player* player, std::vector<Enemy>& enemies, unsigned state) {
+int AI(Player* player, std::vector<Enemy>& enemies, unsigned state) {
 
     /**
     * 1. get player's first position.
@@ -474,7 +451,7 @@ Enemy* AI(Player* player, std::vector<Enemy>& enemies, unsigned state) {
 
     if (state == 0) {
         currPl_x = player->position.x + player->player_T.width / 2;
-        return attacker;
+        return 0;
     }
 
     nextPl_x = player->position.x + player->player_T.width / 2;
@@ -594,8 +571,6 @@ void drawManager(Player* player, std::vector<Bullet>& playerBullets, std::vector
     }
 }
 
-
-
 //----------------------------------------------------------------------------------
 // Gameplay Screen Functions Definition
 //----------------------------------------------------------------------------------
@@ -644,23 +619,44 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
 void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<EnemyBullet>& enemiesBullets, std::vector<Enemy>& enemies, Bunker* bunker1)
 {
 
-
-
     updateManager(player, playerBullets, enemiesBullets, enemies, bunker1);
 
-    if (AI_framesCounter == AI_REFRESH_RATE) {
-        attacker = AI(player, enemies, 0);
-    }
+    if (AI_framesCounter == AI_REFRESH_RATE)
+        AI(player, enemies, 0);
     else if (AI_framesCounter == 0) {
-        if (attacker = AI(player, enemies, 1)) {
 
-            /*enemiesBullets.push_back(EnemyBullet(allTexture.at(ENEMY_FASTER_BULLET_1_T), allTexture.at(ENEMY_FASTER_BULLET_2_T), allTexture.at(ENEMY_FASTER_BULLET_3_T),
+        int result_AI = AI(player, enemies, 1);
+
+        // Static_AI
+        if (result_AI == 1 && enemiesBullets.size() < ENEMIES_MAX_SHOT) {
+
+            // Randomly selecting a enemy bullet type
+            std::random_device dev;
+            std::mt19937 rng(dev());
+            std::uniform_int_distribution<std::mt19937::result_type> genRand(BulletType::SLOWER_BULLET, BulletType::POWERFUL_BULLET);
+
+            BulletType r = static_cast<BulletType> (genRand(rng));
+            int index = -1;
+
+            if (r == BulletType::SLOWER_BULLET)
+                index = TextureIndexes::ENEMY_SLOW_BULLET_1_T;
+            else if (r == BulletType::FASTER_BULLET)
+                index = TextureIndexes::ENEMY_FASTER_BULLET_1_T;
+            else
+                index = TextureIndexes::ENEMY_POWERFUL_BULLET_1_T;
+            //----------------------------------------------------------------------------------
+
+            enemiesBullets.push_back(EnemyBullet(allTexture.at(index), allTexture.at(index + 1), allTexture.at(index + 2),
+                allTexture.at(index + 3), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
+                Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, r));
+
+        }
+        // Predictive_AI
+        else if (result_AI == 2 && enemiesBullets.size() < ENEMIES_MAX_SHOT) {  
+
+            enemiesBullets.push_back(EnemyBullet(allTexture.at(ENEMY_FASTER_BULLET_1_T), allTexture.at(ENEMY_FASTER_BULLET_2_T), allTexture.at(ENEMY_FASTER_BULLET_3_T),
                 allTexture.at(ENEMY_FASTER_BULLET_4_T), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
-                Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, BulletType::FASTER_BULLET));*/
-
-            // TODO uncomment
-            //attacker->AI_target = false;
-            //attacker = nullptr;
+                Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, BulletType::FASTER_BULLET));
         }
 
         AI_framesCounter = AI_REFRESH_RATE + 1;
