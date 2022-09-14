@@ -1,6 +1,6 @@
 #pragma once
 #include "raylib.h"
-#include "../_build/typedef.h"
+#include "typedef.h"
 
 class BunkerSlice {
 public:

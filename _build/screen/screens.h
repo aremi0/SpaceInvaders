@@ -28,6 +28,7 @@ extern Font font;
 extern Music music;
 extern Sound fxCoin;
 extern Sound fxBulletShot;
+extern Sound fxPlayerExplosion;
 extern Sound fxEnemyExplosion;
 extern Sound fxEnemyMove;
 

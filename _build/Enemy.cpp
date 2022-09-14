@@ -50,8 +50,3 @@ void Enemy::draw(void) {
 		DrawLine((this->position.x + this->enemy_T1.width / 2), this->position.y, (this->position.x + this->enemy_T1.width / 2), GetScreenHeight(), YELLOW);
 	}
 }
-
-Enemy* Enemy::StartExploding(void) {
-	this->exploding = true;
-	return this;
-}

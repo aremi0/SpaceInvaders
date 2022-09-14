@@ -35,6 +35,7 @@ Bunker* bunker1;
 
 // Player-specified resources
 Sound fxBulletShot = { 0 };
+Sound fxPlayerExplosion = { 0 };
 Player* player = nullptr;
 std::vector<Bullet> playerBullets;
 
@@ -91,6 +92,7 @@ int main(void)
     fxBulletShot = LoadSound("resources/sound/shoot.wav");
     fxEnemyExplosion = LoadSound("resources/sound/invaderkilled.wav");
     fxEnemyMove = LoadSound("resources/sound/fastinvader1.wav");
+    fxPlayerExplosion = LoadSound("resources/sound/explosion.wav");
     loadAllTextures();
 
     SetMusicVolume(music, 0.5f);
@@ -102,7 +104,7 @@ int main(void)
 
     // Game object's creation
     //----------------------------------------------------------------------------------
-    player = new Player(allTexture.at(TextureIndexes::PLAYER_T));
+    player = new Player(allTexture.at(TextureIndexes::PLAYER_T), allTexture.at(TextureIndexes::PLAYER_EXPLODING_1_T), allTexture.at(TextureIndexes::PLAYER_EXPLODING_2_T));
 
     int i = TextureIndexes::BUNKER_TOP_LEFT_1_T;
     bunker1 = new Bunker(Position{ 56, 520 }, allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_2_T),
@@ -170,6 +172,7 @@ int main(void)
     UnloadSound(fxBulletShot);
     UnloadSound(fxEnemyExplosion);
     UnloadSound(fxEnemyMove);
+    UnloadSound(fxPlayerExplosion);
 
     // Unaload all textures from V-RAM
     for (auto& obj : allTexture)

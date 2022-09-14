@@ -55,7 +55,3 @@ void Bullet::draw(void) {
 	
 }
 
-Bullet* Bullet::StartExploding(void) {
-	this->exploding = true;
-	return this;
-}

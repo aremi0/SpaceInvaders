@@ -20,8 +20,7 @@ Bunker::Bunker(Position sp,
 	this->bottomLeft = new BunkerSlice(1200, bL1, bL2, bL3, bL4);
 	this->bottomRight = new BunkerSlice(1200, bR1, bR2, bR3, bR4);
 
-	this->health = topLeft->currentHealth + topCenter->currentHealth + topRight->currentHealth + centerLeft->currentHealth + centerCenter->currentHealth + centerRight->currentHealth +
-		bottomLeft->currentHealth + bottomRight->currentHealth;
+	this->health = 8;
 }
 
 bool Bunker::collisionDetector(Bullet* bullet) {
@@ -33,9 +32,8 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			Rectangle{ bullet->position.x, bullet->position.y, bullet->bullet_T.width * 1.0f, bullet->bullet_T.height * 1.0f })) {
 
 			this->topLeft->currentHealth -= bullet->power;
-			this->health -= bullet->power;
 
-			printf("___HIT_____bunker_<top-left:%d>__________\n", this->topLeft->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><top-left:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
 
 			if (bullet->type == BulletType::PLAYER_BULLET)
 				bullet->position.y += 5;
@@ -43,6 +41,7 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			if (topLeft->currentHealth < 10) {
 				delete topLeft;
 				topLeft = nullptr;
+				this->health--;
 			}
 
 			return true;
@@ -57,7 +56,7 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			this->topCenter->currentHealth -= bullet->power;
 			this->health -= bullet->power;
 
-			printf("___HIT_____bunker_<top-center:%d>__________\n", this->topCenter->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><top-center:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
 
 			if (bullet->type == BulletType::PLAYER_BULLET)
 				bullet->position.y += 5;
@@ -79,7 +78,7 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			this->topRight->currentHealth -= bullet->power;
 			this->health -= bullet->power;
 
-			printf("___HIT_____bunker_<top-right:%d>__________\n", this->topRight->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><top-right:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
 
 			if (bullet->type == BulletType::PLAYER_BULLET)
 				bullet->position.y += 5;
@@ -101,7 +100,7 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			this->centerLeft->currentHealth -= bullet->power;
 			this->health -= bullet->power;
 
-			printf("___HIT_____bunker_<center-left:%d>__________\n", this->centerLeft->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><center-left:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
 
 			if (bullet->type == BulletType::PLAYER_BULLET)
 				bullet->position.y += 5;
@@ -123,7 +122,7 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			this->centerCenter->currentHealth -= bullet->power;
 			this->health -= bullet->power;
 
-			printf("___HIT_____bunker_<center-center:%d>__________\n", this->centerCenter->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><center-center:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
 			
 			if (bullet->type == BulletType::PLAYER_BULLET)
 				bullet->position.y += 5;
@@ -145,7 +144,7 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			this->centerRight->currentHealth -= bullet->power;
 			this->health -= bullet->power;
 
-			printf("___HIT_____bunker_<center-right:%d>__________\n", this->centerRight->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><center-right:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
 
 			if (bullet->type == BulletType::PLAYER_BULLET)
 				bullet->position.y += 5;
@@ -167,7 +166,7 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			this->bottomLeft->currentHealth -= bullet->power;
 			this->health -= bullet->power;
 
-			printf("___HIT_____bunker_<bottom-left:%d>__________\n", this->bottomLeft->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><bottom-left:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
 
 			if (bottomLeft->currentHealth < 10) {
 				delete bottomLeft;
@@ -186,7 +185,7 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			this->bottomRight->currentHealth -= bullet->power;
 			this->health -= bullet->power;
 
-			printf("___HIT_____bunker_<bottom-right:%d>__________\n", this->bottomRight->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><bottom-right:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
 
 			if (bottomRight->currentHealth < 10) {
 				delete bottomRight;
