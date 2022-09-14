@@ -349,6 +349,136 @@ int loadAllTextures(void) {
     allTexture.push_back(texture);                                                      // ENEMY_POWERFUL_BULLET_4_T => index 27
     UnloadImage(image);
 
+// BUNKER TEXTURES
+//----------------------------------------------------------------------------------
+    // BUNKER_TOP_LEFT_1
+    image = LoadImage("resources/img/bunker/top-left-0.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_TOP_LEFT_1_T => index 28
+    UnloadImage(image);
+
+    // BUNKER_TOP_LEFT_2
+    image = LoadImage("resources/img/bunker/top-left-1.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_TOP_LEFT_2_T => index 29
+    UnloadImage(image);
+
+    // BUNKER_TOP_LEFT_3
+    image = LoadImage("resources/img/bunker/top-left-2.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_TOP_LEFT_3_T => index 30
+    UnloadImage(image);
+
+    // BUNKER_TOP_LEFT_4
+    image = LoadImage("resources/img/bunker/top-left-3.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_TOP_LEFT_4_T => index 31
+    UnloadImage(image);
+
+    //----------------------------------------------------------------------------------
+
+    // BUNKER_CENTER_1
+    image = LoadImage("resources/img/bunker/plain-0.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_CENTER_1_T => index 32
+    UnloadImage(image);
+
+    // BUNKER_CENTER_2
+    image = LoadImage("resources/img/bunker/plain-1.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_CENTER_2_T => index 33
+    UnloadImage(image);
+
+    // BUNKER_CENTER_3
+    image = LoadImage("resources/img/bunker/plain-2.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_CENTER_3_T => index 34
+    UnloadImage(image);
+
+    // BUNKER_CENTER_4
+    image = LoadImage("resources/img/bunker/plain-3.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_CENTER_4_T => index 35
+    UnloadImage(image);
+
+    //----------------------------------------------------------------------------------
+
+    // BUNKER_TOP_RIGHT_1
+    image = LoadImage("resources/img/bunker/top-right-0.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_TOP_RIGHT_1_T => index 36
+    UnloadImage(image);
+
+    // BUNKER_TOP_RIGHT_2
+    image = LoadImage("resources/img/bunker/top-right-1.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_TOP_RIGHT_2_T => index 37
+    UnloadImage(image);
+
+    // BUNKER_TOP_RIGHT_3
+    image = LoadImage("resources/img/bunker/top-right-2.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_TOP_RIGHT_3_T => index 38
+    UnloadImage(image);
+
+    // BUNKER_TOP_RIGHT_4
+    image = LoadImage("resources/img/bunker/top-right-3.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_TOP_RIGHT_4_T => index 39
+    UnloadImage(image);
+
+    //----------------------------------------------------------------------------------
+
+    // BUNKER_BOTTOM_RIGHT_1
+    image = LoadImage("resources/img/bunker/center-right-0.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_RIGHT_1_T => index 40
+    UnloadImage(image);
+
+    // BUNKER_BOTTOM_RIGHT_2
+    image = LoadImage("resources/img/bunker/center-right-1.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_RIGHT_2_T => index 41
+    UnloadImage(image);
+
+    // BUNKER_BOTTOM_RIGHT_3
+    image = LoadImage("resources/img/bunker/center-right-2.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_RIGHT_3_T => index 42
+    UnloadImage(image);
+
+    // BUNKER_BOTTOM_RIGHT_4
+    image = LoadImage("resources/img/bunker/center-right-3.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_RIGHT_4_T => index 43
+    UnloadImage(image);
+
+    //----------------------------------------------------------------------------------
+
+    // BUNKER_BOTTOM_LEFT_1
+    image = LoadImage("resources/img/bunker/center-left-0.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_LEFT_1_T => index 44
+    UnloadImage(image);
+
+    // BUNKER_BOTTOM_LEFT_2
+    image = LoadImage("resources/img/bunker/center-left-1.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_LEFT_2_T => index 45
+    UnloadImage(image);
+
+    // BUNKER_BOTTOM_LEFT_3
+    image = LoadImage("resources/img/bunker/center-left-2.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_LEFT_3_T => index 46
+    UnloadImage(image);
+
+    // BUNKER_BOTTOM_LEFT_4
+    image = LoadImage("resources/img/bunker/center-left-3.png");
+    texture = LoadTextureFromImage(image);
+    allTexture.push_back(texture);                                                      // BUNKER_BOTTOM_LEFT_4_T => index 47
+    UnloadImage(image);
+
     return 1;
 }
 
