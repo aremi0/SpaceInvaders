@@ -1,31 +1,34 @@
 ## SpaceInvaders!  
+  
 My version of the legendary videogame Space Invaders!  
-I tried to make it as faithful as possible of the original.  
+<sub>I tried to make it as faithful as possible.</sub>  
 ---  
 
 ### Developed in C++ with Visual Studio Community 2022 through raylib graphic library.  
 - [raylib library 4.2 (OpenGL 3.3)](https://github.com/raysan5/raylib)  
 ---  
 
-## game mechanics description
-- general game's rules
-- views  
-- gameplay's elements  
-- collisions detector
-- enemies AI
+## Description
+- General game's rules.
+- Game's views.
+- Gameplay's elements.
+- Collisions detector.
+- Enemies AI.
 
 ### general game's rules
-...  
+[Game's rules](https://www.classicgaming.cc/classics/space-invaders/play-guide)
 
 ### Views
-This version is provided with 5 different view sequenced in the following order; Logo, Title, Gameplay, Options, Ending.
-Actually all of these except for the Gameplay and Logo Views are empty, but they will be implemented in the future as:  
-1. Logo: a short animated (skippable) introduction to the Title View.
-2. Title: that will be renamed as MainMenu and will allow to start a new game, change settings, ...
-3. Options: settings menu.
-4. Gameplay: the very protagonist, which already allows you to play.
-5. Pause: that will accessible only by the Gameplay View and will be added later.
-6. Ending: the gameover view.
+The game was developed following a Views model, each one dedicated to a specific execution status.  
+Right now there are 5 different views sequenced in the following order; Logo, Title, Gameplay, Options, Ending, of which, currently, only the
+Gameplay and Logo ones are functional and animated.  
+The idea behind each screen is:
+1. *Logo:* a short animated (skippable) introduction to the Title View.
+2. *Title:* that will be renamed as MainMenu and will allow to start a new game, change settings, ...
+3. *Options:* settings menu.
+4. *Gameplay:* the very protagonist, which already allows you to play.
+5. *Pause:* that will accessible only by the Gameplay View and will be added later.
+6. *Ending:* the gameover view.
 
 ### gameplay's elements  
 The gameplay view is composed of several elements:
