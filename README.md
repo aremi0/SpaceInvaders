@@ -9,8 +9,8 @@
 ---  
 
 ## Description
-- [General game rules]. (#General game rules)
-- [Views]. (#Views)
+- [General game rules]. (./readme.md#General game rules)
+- [Game Views]. (./#Views)
 - [Gameplay elements]. (#Gameplay elements)
 - [Collision detector]. (#Collision detector)
 - [Enemies AI]. (#Enemies AI)
