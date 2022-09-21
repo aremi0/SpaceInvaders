@@ -1,7 +1,7 @@
 ## SpaceInvaders!  
-  
-My version of the legendary videogame Space Invaders!  
-<sub>I tried to make it as faithful as possible.</sub>  
+<p>My version of the legendary videogame Space Invaders!</p>
+<p><sub>I tried to make it as faithful as possible.</sub></p>
+
 ---  
 
 ### Developed in C++ with Visual Studio Community 2022 through raylib graphic library.  
@@ -9,13 +9,13 @@ My version of the legendary videogame Space Invaders!
 ---  
 
 ## Description
-- General game's rules.
-- Game's views.
-- Gameplay's elements.
-- Collisions detector.
-- Enemies AI.
+- [General game's rules].
+- [Views].
+- [Gameplay's elements].
+- [Collisions detector].
+- [Enemies AI].
 
-### general game's rules
+### General game's rules
 [Game's rules](https://www.classicgaming.cc/classics/space-invaders/play-guide)
 
 ### Views
@@ -23,34 +23,36 @@ The game was developed following a Views model, each one dedicated to a specific
 Right now there are 5 different views sequenced in the following order; Logo, Title, Gameplay, Options, Ending, of which, currently, only the
 Gameplay and Logo ones are functional and animated.  
 The idea behind each screen is:
-1. *Logo:* a short animated (skippable) introduction to the Title View.
-2. *Title:* that will be renamed as MainMenu and will allow to start a new game, change settings, ...
-3. *Options:* settings menu.
-4. *Gameplay:* the very protagonist, which already allows you to play.
-5. *Pause:* that will accessible only by the Gameplay View and will be added later.
-6. *Ending:* the gameover view.
+1. **Logo:** a short animated (skippable) introduction to the *'Menu View'*.
+2. **Menu:** will allow to start a new game, to acces settings menu, etc.
+3. **Options:** settings menu.
+4. **Gameplay:** the very protagonist, which already allows you to play a new game.
+5. **Pause:** will be accessible only by the Gameplay View to pause the current game.
+6. **Ending:** will appear in case of Game Over event.
 
-### gameplay's elements  
-The gameplay view is composed of several elements:
-- Player: an object that will allow to the user to interact and play the game.
-- Enemy: a grid of 11x5 alien plus a Boss that will appear randomly in upper section of the window.
-- Bullet: an object can be shotted by the player and all the enemies in the lower row of their grid. There 4 types of bullet; player's bullet on it's own and
-3 types of enemies bullet: slower, faster, powerful. in each frame there are allowed to be at most 2 player's bullet and 3 enemies bullet (modifiable through a constant).
-- Bunker: in each start game there will be 3 bunker, that is an object composed of 8 different slices, each one with it's own graphic and resistence to the bullet.
+### Gameplay's elements  
+The game is composed of several elements:
+- **Player:** an object in the form of a Tank that will allow the user to interact (play) with the game.
+- **Enemy:** a grid of 11x5 of three type of alien (Squid, Crab and Octopus) plus a Boss (UFO, that will appear randomly).
+- **Bullet:** an object used by player and enemies to destroy each other.  
+    There are four types of bullet; *player's bullet* and three types of enemies bullet: *slower*, *faster*, *powerful*.
+    Currently in a frame are allowed (through a settable control mechanism) to be at most 2 player's bullet and 3 enemies bullet.
+- **Bunker:** in every game, as in the original game, there will be 3 bunker, that is an object composed of 8 different slices, each one with it's own graphic, animation and resistence to the bullet.
 
-### collision detector  
-There is collision between:
-1. player with enemies's bullets.
-2. enemies with player's bullets.
-3. player's bullets with roof of the gameplay's window.
-4. enemies's bullets with the floor of the gameplay's window.
-5. player's bullets with enemies's bullets.
-6. player's bllets with bunker.
-7. enemies's bullets with bunker.
+### Collisions detector  
+There is collision detection between:
+1. Player with enemies's bullets.
+2. Enemies with player's bullets.
+3. Player's bullets with roof of gameplay's window.
+4. Enemies's bullets with floor of gameplay's window.
+5. Player's bullets with enemies's bullets.
+6. Player's bullets with bunker.
+7. Enemies's bullets with bunker.
 
-### enemies AI
+### Enemies AI
 The enemies will act as a team (the 11x5 grid) and not indiviually with 3 different attack strategy, based of the player status: 
 All these following evaluation will be executed each 10 frames (time to see if player is moving or not).
+
 #### Strategy 1: static_AI  
 If currently the player is still in the same position will be triggered this stragety. If the player is in the fire range of one column of the enemies grid so
 the enemy in the bottom of the column will be selected to shot a _random_ bullet type (faster, slower, powerful).
