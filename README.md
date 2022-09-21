@@ -9,14 +9,14 @@
 ---  
 
 ## Description
-- [General game's rules].
-- [Views].
-- [Gameplay's elements].
-- [Collisions detector].
-- [Enemies AI].
+- [General game rules]. (#General game rules)
+- [Views]. (#Views)
+- [Gameplay elements]. (#Gameplay elements)
+- [Collision detector]. (#Collision detector)
+- [Enemies AI]. (#Enemies AI)
 
-### General game's rules
-[Game's rules](https://www.classicgaming.cc/classics/space-invaders/play-guide)
+### General game rules
+[Game rules](https://www.classicgaming.cc/classics/space-invaders/play-guide)
 
 ### Views
 The game was developed following a Views model, each one dedicated to a specific execution status.  
@@ -30,7 +30,7 @@ The idea behind each screen is:
 5. **Pause:** will be accessible only by the Gameplay View to pause the current game.
 6. **Ending:** will appear in case of Game Over event.
 
-### Gameplay's elements  
+### Gameplay elements
 The game is composed of several elements:
 - **Player:** an object in the form of a Tank that will allow the user to interact (play) with the game.
 - **Enemy:** a grid of 11x5 of three type of alien (Squid, Crab and Octopus) plus a Boss (UFO, that will appear randomly).
@@ -39,7 +39,7 @@ The game is composed of several elements:
     Currently in a frame are allowed (through a settable control mechanism) to be at most 2 player's bullet and 3 enemies bullet.
 - **Bunker:** in every game, as in the original game, there will be 3 bunker, that is an object composed of 8 different slices, each one with it's own graphic, animation and resistence to the bullet.
 
-### Collisions detector  
+### Collision detector
 There is collision detection between:
 1. Player with enemies's bullets.
 2. Enemies with player's bullets.
@@ -69,6 +69,7 @@ If 0 was returned by the 2 strategies above that means the player is currently o
 to shot the powerful bullet at one random player's bunker.  
   
   
-  
+### Some screen
+
   
 TODO update and corrent this readme.  
