@@ -107,16 +107,7 @@ int main(void)
     //----------------------------------------------------------------------------------
     player = new Player(allTexture.at(TextureIndexes::PLAYER_T), allTexture.at(TextureIndexes::PLAYER_EXPLODING_1_T), allTexture.at(TextureIndexes::PLAYER_EXPLODING_2_T));
 
-
-
-    bunker1 = new Bunker(Position{ 450 - (allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T).width + allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T).width / 2.0f) , screenHeight * 0.765 }, allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_2_T),
-        allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_3_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_4_T), allTexture.at(TextureIndexes::BUNKER_CENTER_1_T),
-        allTexture.at(TextureIndexes::BUNKER_CENTER_2_T), allTexture.at(TextureIndexes::BUNKER_CENTER_3_T), allTexture.at(TextureIndexes::BUNKER_CENTER_4_T),
-        allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_2_T), allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_3_T),
-        allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_4_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_2_T),
-        allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_3_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_4_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_1_T),
-        allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_2_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_3_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_4_T));
-
+    // Bunkers
     // Left
     bunkers[0] = new Bunker(Position{ ((screenWidth / 2) - (screenWidth / 3)) - (allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T).width + allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T).width / 2.0f), screenHeight * 0.765 },
         allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_2_T),

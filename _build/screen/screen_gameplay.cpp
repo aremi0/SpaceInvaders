@@ -14,6 +14,7 @@
 
 #define AI_REFRESH_RATE 10
 #define ENEMIES_MAX_SHOT 3
+#define ENEMIES_WAIT_BEFORE_SHOT 80
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
@@ -30,8 +31,10 @@ char staticMsg[128];
 // Enemies AI
 std::array<int, 55> aliveEnemiesMatrix;                                       // 
 std::array<int, 11> enemiesColumnsDeathCounter;                               // Determine column status of actually death enemies
-//int isAttackerSelected;                                                     // Allows AI to select only one enemy per time
 Enemy* attacker;
+int enemyShotWait;
+bool enemyHasShot;
+bool enemyCanShot;
 
 // AI predictive strategy variables
 int AI_framesCounter;
@@ -514,8 +517,51 @@ int predictive_AI(Player* player, std::vector<Enemy>& enemies, int direction) {
     return 0;
 }
 
+int bunker_AI(Bunker* bunker, std::vector<Enemy>& enemies) {
+
+    std::sprintf(AI_text[0], "out_of_range");
+    std::sprintf(AI_text[1], "bunker_attack");
+    float sliceX = 0.0f;
+
+    if (bunker->topLeft || bunker->centerLeft || bunker->bottomLeft)
+        sliceX = bunker->spawn.x + 12.0f;
+    else if(bunker->topCenter || bunker->centerCenter)
+        sliceX = bunker->spawn.x + 36.0f;
+    else
+        sliceX = bunker->spawn.x + 60.0f;
+
+
+    for (auto enemy = begin(enemies); enemy != end(enemies); enemy++) {
+
+        int x = enemy->gridX - 1;
+        int offset = 4 - enemiesColumnsDeathCounter[x];
+
+        enemy += offset;
+        float enemyX = enemy->position.x + enemy->enemy_T1.width / 2;
+
+        std::sprintf(AI_text[2], "%s", "out_of_range");
+
+        // Bunker is inside range of the current enemy => SHOT
+        if (sliceX <= enemyX + 12.0 && sliceX >= enemyX - 12.0) {
+
+            enemy->AI_target = true;
+
+            std::sprintf(AI_text[2], "%d", (int)sliceX);
+
+            attacker = enemy._Ptr;
+            return 1;
+        }
+
+        enemy->AI_target = false;
+
+    }
+
+    attacker = nullptr;
+    return 0;
+}
+
 // Real-time scheduling of an enemy that should shot to the player 
-int AI(Player* player, std::vector<Enemy>& enemies, unsigned state) {
+int AI(Player* player, std::vector<Enemy>& enemies,unsigned state) {
 
     /**
     * 1. get player's first position.
@@ -532,8 +578,6 @@ int AI(Player* player, std::vector<Enemy>& enemies, unsigned state) {
     }
 
     nextPl_x = player->position.x + player->player_T.width / 2;
-
-
 
     if (nextPl_x < currPl_x) {                          // Player is moving to left
         std::sprintf(AI_text[0], "moving");
@@ -602,7 +646,7 @@ void textHandler() {
 
     // PersistentMsg
     aux = MeasureText(staticMsg, 14);
-    std::sprintf(staticMsg, "__debug_AI\n\tplayer is \n\tstrategy: \n\tplayer.x: ");
+    std::sprintf(staticMsg, "__debug_AI\n\tplayer is \n\tstrategy: \n\ttarget.x: ");
     DrawText(staticMsg, GetScreenWidth() - 170, GetScreenHeight() * 0.85, 13, RED);
 
     std::sprintf(staticMsg, "\t%s\n\t%s\n\t%s", AI_text[0], AI_text[1], AI_text[2]);
@@ -684,6 +728,9 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
     enemiesColumnsDeathCounter.fill(0);
     //isAttackerSelected = 0;
     attacker = nullptr;
+    enemyShotWait = ENEMIES_WAIT_BEFORE_SHOT;
+    enemyHasShot = false;
+    enemyCanShot = true;
 
     // Predictive AI initialization
     AI_framesCounter = AI_REFRESH_RATE;
@@ -697,6 +744,16 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
 // Gameplay Screen Update logic
 void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<EnemyBullet>& enemiesBullets, std::vector<Enemy>& enemies, std::array<Bunker*, 3>& bunkers)
 {
+    // This will allow enemies to shot their bullet each ENEMIES_WAIT_BEFORE_SHOT frames and not all instantly
+    if (enemyHasShot) {
+        enemyShotWait--;
+
+        if (enemyShotWait <= 0) {
+            enemyCanShot = true;
+            enemyHasShot = false;
+            enemyShotWait = ENEMIES_WAIT_BEFORE_SHOT;
+        }
+    }
 
     updateManager(player, playerBullets, enemiesBullets, enemies, bunkers);
 
@@ -707,7 +764,7 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
         int result_AI = AI(player, enemies, 1);
 
         // Static_AI
-        if (result_AI == 1 && enemiesBullets.size() < ENEMIES_MAX_SHOT) {
+        if (result_AI == 1 && enemiesBullets.size() < ENEMIES_MAX_SHOT && enemyCanShot) {
 
             // Randomly selecting a enemy bullet type
             std::random_device dev;
@@ -729,13 +786,54 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
                 allTexture.at(index + 3), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
                 Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, r));
 
+            enemyCanShot = false;
+            enemyHasShot = true;
         }
         // Predictive_AI
-        else if (result_AI == 2 && enemiesBullets.size() < ENEMIES_MAX_SHOT) {  
+        else if (result_AI == 2 && enemiesBullets.size() < ENEMIES_MAX_SHOT && enemyCanShot) {
 
             enemiesBullets.push_back(EnemyBullet(allTexture.at(ENEMY_FASTER_BULLET_1_T), allTexture.at(ENEMY_FASTER_BULLET_2_T), allTexture.at(ENEMY_FASTER_BULLET_3_T),
                 allTexture.at(ENEMY_FASTER_BULLET_4_T), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
                 Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, BulletType::FASTER_BULLET));
+
+            enemyCanShot = false;
+            enemyHasShot = true;
+        }
+        // Bunkers_AI
+        else if (result_AI == 0 && enemiesBullets.size() < ENEMIES_MAX_SHOT && enemyCanShot) {
+
+            if (bunkers[0] && bunker_AI(bunkers[0], enemies)) {
+                enemiesBullets.push_back(EnemyBullet(allTexture.at(ENEMY_POWERFUL_BULLET_1_T), allTexture.at(ENEMY_POWERFUL_BULLET_2_T), allTexture.at(ENEMY_POWERFUL_BULLET_3_T),
+                    allTexture.at(ENEMY_POWERFUL_BULLET_4_T), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
+                    Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, BulletType::POWERFUL_BULLET));
+
+                enemyCanShot = false;
+                enemyHasShot = true;
+            }
+            else if (bunkers[1] && bunker_AI(bunkers[1], enemies)) {
+                enemiesBullets.push_back(EnemyBullet(allTexture.at(ENEMY_POWERFUL_BULLET_1_T), allTexture.at(ENEMY_POWERFUL_BULLET_2_T), allTexture.at(ENEMY_POWERFUL_BULLET_3_T),
+                    allTexture.at(ENEMY_POWERFUL_BULLET_4_T), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
+                    Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, BulletType::POWERFUL_BULLET));
+
+                enemyCanShot = false;
+                enemyHasShot = true;
+            }
+            else if (bunkers[2] && bunker_AI(bunkers[2], enemies)) {
+                enemiesBullets.push_back(EnemyBullet(allTexture.at(ENEMY_POWERFUL_BULLET_1_T), allTexture.at(ENEMY_POWERFUL_BULLET_2_T), allTexture.at(ENEMY_POWERFUL_BULLET_3_T),
+                    allTexture.at(ENEMY_POWERFUL_BULLET_4_T), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
+                    Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, BulletType::POWERFUL_BULLET));
+
+                enemyCanShot = false;
+                enemyHasShot = true;
+            }
+            else {
+                std::sprintf(AI_text[0], "out_of_range");
+                std::sprintf(AI_text[1], "no_target");
+                std::sprintf(AI_text[2], "---");
+
+                enemyCanShot = true;
+                enemyHasShot = false;
+            }
         }
 
         AI_framesCounter = AI_REFRESH_RATE + 1;
