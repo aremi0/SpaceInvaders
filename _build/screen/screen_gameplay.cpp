@@ -14,7 +14,7 @@
 
 #define AI_REFRESH_RATE 10
 #define ENEMIES_MAX_SHOT 3
-#define ENEMIES_WAIT_BEFORE_SHOT 80
+#define ENEMIES_WAIT_BEFORE_SHOT 50
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
@@ -580,18 +580,12 @@ int AI(Player* player, std::vector<Enemy>& enemies,unsigned state) {
     nextPl_x = player->position.x + player->player_T.width / 2;
 
     if (nextPl_x < currPl_x) {                          // Player is moving to left
-        std::sprintf(AI_text[0], "moving");
-        std::sprintf(AI_text[1], "predictive");
         return predictive_AI(player, enemies, -1);
     }
     else if (nextPl_x > currPl_x) {                       // Player is moving to right
-        std::sprintf(AI_text[0], "moving");
-        std::sprintf(AI_text[1], "predictive");
         return predictive_AI(player, enemies, +1);
     }
     else {
-        std::sprintf(AI_text[0], "still");
-        std::sprintf(AI_text[1], "static");
         return static_AI(nextPl_x, enemies);            // Player is still
     }
 }
@@ -766,6 +760,9 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
         // Static_AI
         if (result_AI == 1 && enemiesBullets.size() < ENEMIES_MAX_SHOT && enemyCanShot) {
 
+            std::sprintf(AI_text[0], "still");
+            std::sprintf(AI_text[1], "static");
+
             // Randomly selecting a enemy bullet type
             std::random_device dev;
             std::mt19937 rng(dev());
@@ -791,6 +788,9 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
         }
         // Predictive_AI
         else if (result_AI == 2 && enemiesBullets.size() < ENEMIES_MAX_SHOT && enemyCanShot) {
+
+            std::sprintf(AI_text[0], "moving");
+            std::sprintf(AI_text[1], "predictive");
 
             enemiesBullets.push_back(EnemyBullet(allTexture.at(ENEMY_FASTER_BULLET_1_T), allTexture.at(ENEMY_FASTER_BULLET_2_T), allTexture.at(ENEMY_FASTER_BULLET_3_T),
                 allTexture.at(ENEMY_FASTER_BULLET_4_T), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
