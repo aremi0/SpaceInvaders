@@ -9,16 +9,16 @@
 ---  
 
 ## Description
-- [General game rules] (#General game rules).
-- [Game Views] (#Views).
-- [Gameplay elements] (#Gameplay elements).
-- [Collision detector] (#Collision detector).
-- [Enemies AI] (#Enemies AI).
+- [General game rules](#general).
+- [Game Views](#views).
+- [Gameplay elements](#gameplay).
+- [Collision detector](#collision).
+- [Enemies AI](#ai).
 
-### General game rules
+### <a name="general"></a> General game rules
 [Game rules](https://www.classicgaming.cc/classics/space-invaders/play-guide)
 
-### Views
+### <a name="views"></a> Views
 The game was developed following a Views model, each one dedicated to a specific execution status.  
 Right now there are 5 different views sequenced in the following order; Logo, Title, Gameplay, Options, Ending, of which, currently, only the
 Gameplay and Logo ones are functional and animated.  
@@ -30,7 +30,7 @@ The idea behind each screen is:
 5. **Pause:** will be accessible only by the Gameplay View to pause the current game.
 6. **Ending:** will appear in case of Game Over event.
 
-### Gameplay elements
+### <a name="gameplay"></a> Gameplay elements
 The game is composed of several elements:
 - **Player:** an object in the form of a Tank that will allow the user to interact (play) with the game.
 - **Enemy:** a grid of 11x5 of three type of alien (Squid, Crab and Octopus) plus a Boss (UFO, that will appear randomly).
@@ -39,7 +39,7 @@ The game is composed of several elements:
     Currently in a frame are allowed (through a settable control mechanism) to be at most 2 player's bullet and 3 enemies bullet.
 - **Bunker:** in every game, as in the original game, there will be three destructible bunker, that is an object composed of 8 different slices, each one with it's own graphic, animation and resistence to the bullet.
 
-### Collision detector
+### <a name="collision"></a> Collision detector
 There is collision detection between:
 1. Player with enemies bullets.
 2. Enemies with player bullets.
@@ -49,7 +49,7 @@ There is collision detection between:
 6. Player bullets with bunker.
 7. Enemies bullets with bunker.
 
-### Enemies AI
+### <a name="ai"></a> Enemies AI
 The enemies will act as a team (the 11x5 grid) and not indiviually with 3 different attack strategy, based of the player status: 
 All these following evaluation will be executed each 10 frames (time to see if player is moving or not).
 Enemies will shot their bullet with a settable rateo of fire.
@@ -71,4 +71,6 @@ to shot the powerful bullet at one random player's bunker.
   
   
 ### Gallery
+[![1.png](https://i.postimg.cc/CxmNxdDd/1.png)](https://postimg.cc/FYkcPrTQ)
 <img src="https://i.postimg.cc/CxmNxdDd/1.png" alt="drawing" width="320"/>
+<img src="https://i.postimg.cc/fLXTsmGc/RD36XCL.png" alt="drawing" width="460"/>
