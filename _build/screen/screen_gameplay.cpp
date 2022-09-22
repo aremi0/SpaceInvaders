@@ -28,7 +28,7 @@
 
 // __debug_mode
 unsigned debug_mode;
-std::array<std::string, 128> debug_text;
+std::array<std::string, 10> debug_text;
 
 // View
 static int finishScreen = 0;
@@ -37,7 +37,6 @@ bool musicState = true;
 int framesCounter = 0;
 int textFramesCounter = 0;
 char toastMsg[128];
-char staticMsg[128];
 //----------------------------------------------------------------------------------
 // Gameplay
 int SPEED;                                                                    // Speed of enemies's grid movement
@@ -60,7 +59,6 @@ bool enemyCanShot;
 int AI_framesCounter;
 float currPl_x;
 float nextPl_x;
-char AI_text[3][16];
 //----------------------------------------------------------------------------------
 
 
@@ -119,6 +117,11 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
             framesCounter = 0;
         }
 
+        if (debug_mode == 2) {
+            debug_text[3] = std::to_string(SPEED);
+            debug_text[5] = std::to_string(ROWS_SPEED);
+        }
+
         textState = 2;
         PlaySound(fxCoin);
     }
@@ -127,6 +130,12 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
         textState = 3;
         SPEED = MOVEMENT_SPEED;
         ROWS_SPEED = ROW_GRADUAL_SPEED;
+
+        if (debug_mode == 2) {
+            debug_text[3] = std::to_string(SPEED);
+            debug_text[5] = std::to_string(ROWS_SPEED);
+        }
+
         PlaySound(fxCoin);
     }
 
@@ -165,11 +174,21 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
             case 1: {
                 debug_mode = 2;
                 debug_text.fill("");
+                debug_text[0] = "__debug_mode:";
+                debug_text[1] = "difficulty";
+                debug_text[2] = "mov.speed:";
+                debug_text[3] = std::to_string(SPEED);
+                debug_text[4] = "row.mov.speed:";
+                debug_text[5] = std::to_string(ROWS_SPEED);
+                debug_text[6] = "rate.of.fire:";
+                
                 break;
             }
             case 2: {
                 debug_mode = 3;
                 debug_text.fill("");
+                debug_text[0] = "__debug_mode:";
+                debug_text[1] = "bunker_status";
                 break;
             }
             case 3: {
@@ -511,12 +530,10 @@ int static_AI(float playerX, std::vector<Enemy>& enemies) {
 int predictive_AI(Player* player, std::vector<Enemy>& enemies, int direction) {
 
     /**
-    * 1. get a starting based on playerDirection enemy.x position
+    * 1. get a starting point, based on playerDirection enemy.x position
     *   => to left = begin
     *   => to right = end
-    * 2. calculate player.x in 5 frame forward
-    * 3. calculate how many column skip starting from the enemy chosed
-    * 4.
+    * 2. calculate player.x in Z frame forward, where Z is the frames needed to a faster bullet of a potential enemy
     */
 
     float frameTime = GetFrameTime();
@@ -605,8 +622,8 @@ int AI(Player* player, std::vector<Enemy>& enemies,unsigned state) {
     * 2. wait 5 frame
     * 3. get player's second position.
     * 4. evaluate if player is still or moving
-    *   5. => still = static_AI()
-    *   5. => moving = predictive_AI()
+    *   | => still = static_AI()
+    *   | => moving = predictive_AI()
     */
 
     if (state == 0) {
@@ -676,8 +693,7 @@ void textHandler() {
         break;
     }
 
-    // PersistentMsg
-
+    // __debug_mode
     for (int i = 0; i < 128; i++) {
         if (debug_text[i].size() == 0)
             break;
@@ -701,15 +717,6 @@ void textHandler() {
 
         newLine += 15;
     }
-
-    /*
-    aux = MeasureText(staticMsg, 14);
-    std::sprintf(staticMsg, "__debug_AI\n\tplayer is \n\tstrategy: \n\ttarget.x: ");
-    DrawText(staticMsg, GetScreenWidth() - 170, GetScreenHeight() * 0.85, 13, RED);
-
-    std::sprintf(staticMsg, "\t%s\n\t%s\n\t%s", AI_text[0], AI_text[1], AI_text[2]);
-    DrawText(staticMsg, GetScreenWidth() - 100, GetScreenHeight() * 0.88, 13, AI_text[0][0] == 'm' ? PURPLE : YELLOW);
-    */
 }
 
 // Handle all elements to draw
@@ -770,7 +777,6 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
     framesCounter = 0;
     musicState = true;
     std::sprintf(toastMsg, " ");
-    std::sprintf(staticMsg, " ");
     //----------------------------------------------------------------------------------
     // Gameplay
     SPEED = MOVEMENT_SPEED;
@@ -795,10 +801,6 @@ void InitGameplayScreen(std::vector<Enemy>& enemies)
     AI_framesCounter = AI_REFRESH_RATE;
     currPl_x = 0.0f;
     nextPl_x = 0.0f;
-
-    std::sprintf(AI_text[0], " ");
-    std::sprintf(AI_text[1], " ");
-    std::sprintf(AI_text[2], " ");
 }
 
 // Gameplay Screen Update logic
@@ -812,6 +814,9 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
             enemyCanShot = true;
             enemyHasShot = false;
             enemyShotWait = ENEMIES_WAIT_BEFORE_SHOT;
+
+            if(debug_mode == 2)
+                debug_text[7] = std::to_string(enemyShotWait);
         }
     }
 
