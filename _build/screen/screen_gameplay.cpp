@@ -14,7 +14,7 @@
 
 #define AI_REFRESH_RATE 10
 #define ENEMIES_MAX_SHOT 3
-#define ENEMIES_WAIT_BEFORE_SHOT 50
+#define ENEMIES_WAIT_BEFORE_SHOT 50                                           // Substantially set the enemies fire rateo
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
