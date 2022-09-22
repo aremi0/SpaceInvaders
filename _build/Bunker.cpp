@@ -7,6 +7,7 @@ Bunker::Bunker(Position sp,
 				Texture2D bL1, Texture2D bL2, Texture2D bL3, Texture2D bL4,
 				Texture2D bR1, Texture2D bR2, Texture2D bR3, Texture2D bR4) {
 
+	this->health = 8;
 	this->spawn = sp;
 
 	this->topLeft = new BunkerSlice(2600, tL1, tL2, tL3, tL4);
@@ -19,11 +20,9 @@ Bunker::Bunker(Position sp,
 
 	this->bottomLeft = new BunkerSlice(1200, bL1, bL2, bL3, bL4);
 	this->bottomRight = new BunkerSlice(1200, bR1, bR2, bR3, bR4);
-
-	this->health = 8;
 }
 
-bool Bunker::collisionDetector(Bullet* bullet) {
+unsigned Bunker::collisionDetector(Bullet* bullet) {
 
 
 	// TOP-LEFT
@@ -33,7 +32,7 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 
 			this->topLeft->currentHealth -= bullet->power;
 
-			printf("___bunker__HIT__<b.type:%d><top-left:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><top-left:%d><b.health:%d>______\n", (int)bullet->type, this->topLeft->currentHealth, this->health);
 
 			if (bullet->type == BulletType::PLAYER_BULLET)
 				bullet->position.y += 5;
@@ -42,9 +41,12 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 				delete topLeft;
 				topLeft = nullptr;
 				this->health--;
+
+				if (this->health < 1)
+					return 2;
 			}
 
-			return true;
+			return 1;
 		}
 	}
 
@@ -54,9 +56,8 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			Rectangle{ bullet->position.x, bullet->position.y, bullet->bullet_T.width * 1.0f, bullet->bullet_T.height * 1.0f })) {
 
 			this->topCenter->currentHealth -= bullet->power;
-			this->health -= bullet->power;
 
-			printf("___bunker__HIT__<b.type:%d><top-center:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><top-center:%d><b.health:%d>______\n", (int)bullet->type, this->topCenter->currentHealth, this->health);
 
 			if (bullet->type == BulletType::PLAYER_BULLET)
 				bullet->position.y += 5;
@@ -64,9 +65,13 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			if (topCenter->currentHealth < 10) {
 				delete topCenter;
 				topCenter = nullptr;
+				this->health--;
+
+				if (this->health < 1)
+					return 2;
 			}
 
-			return true;
+			return 1;
 		}
 	}
 
@@ -76,9 +81,8 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			Rectangle{ bullet->position.x, bullet->position.y, bullet->bullet_T.width * 1.0f, bullet->bullet_T.height * 1.0f })) {
 
 			this->topRight->currentHealth -= bullet->power;
-			this->health -= bullet->power;
 
-			printf("___bunker__HIT__<b.type:%d><top-right:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><top-right:%d><b.health:%d>______\n", (int)bullet->type, this->topRight->currentHealth, this->health);
 
 			if (bullet->type == BulletType::PLAYER_BULLET)
 				bullet->position.y += 5;
@@ -86,9 +90,13 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			if (topRight->currentHealth < 10) {
 				delete topRight;
 				topRight = nullptr;
+				this->health--;
+
+				if (this->health < 1)
+					return 2;
 			}
 
-			return true;
+			return 1;
 		}
 	}
 
@@ -98,9 +106,8 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			Rectangle{ bullet->position.x, bullet->position.y, bullet->bullet_T.width * 1.0f, bullet->bullet_T.height * 1.0f })) {
 
 			this->centerLeft->currentHealth -= bullet->power;
-			this->health -= bullet->power;
 
-			printf("___bunker__HIT__<b.type:%d><center-left:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><center-left:%d><b.health:%d>______\n", (int)bullet->type, this->centerLeft->currentHealth, this->health);
 
 			if (bullet->type == BulletType::PLAYER_BULLET)
 				bullet->position.y += 5;
@@ -108,9 +115,13 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			if (centerLeft->currentHealth < 10) {
 				delete centerLeft;
 				centerLeft = nullptr;
+				this->health--;
+
+				if (this->health < 1)
+					return 2;
 			}
 
-			return true;
+			return 1;
 		}
 	}
 
@@ -120,9 +131,8 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			Rectangle{ bullet->position.x, bullet->position.y, bullet->bullet_T.width * 1.0f, bullet->bullet_T.height * 1.0f })) {
 
 			this->centerCenter->currentHealth -= bullet->power;
-			this->health -= bullet->power;
 
-			printf("___bunker__HIT__<b.type:%d><center-center:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><center-center:%d><b.health:%d>______\n", (int)bullet->type, this->centerCenter->currentHealth, this->health);
 			
 			if (bullet->type == BulletType::PLAYER_BULLET)
 				bullet->position.y += 5;
@@ -130,9 +140,13 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			if (centerCenter->currentHealth < 10) {
 				delete centerCenter;
 				centerCenter = nullptr;
+				this->health--;
+
+				if (this->health < 1)
+					return 2;
 			}
 
-			return true;
+			return 1;
 		}
 	}
 
@@ -142,9 +156,8 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			Rectangle{ bullet->position.x, bullet->position.y, bullet->bullet_T.width * 1.0f, bullet->bullet_T.height * 1.0f })) {
 
 			this->centerRight->currentHealth -= bullet->power;
-			this->health -= bullet->power;
 
-			printf("___bunker__HIT__<b.type:%d><center-right:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><center-right:%d><b.health:%d>______\n", (int)bullet->type, this->centerRight->currentHealth, this->health);
 
 			if (bullet->type == BulletType::PLAYER_BULLET)
 				bullet->position.y += 5;
@@ -152,9 +165,13 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			if (centerRight->currentHealth < 10) {
 				delete centerRight;
 				centerRight = nullptr;
+				this->health--;
+
+				if (this->health < 1)
+					return 2;
 			}
 
-			return true;
+			return 1;
 		}
 	}
 
@@ -164,16 +181,19 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			Rectangle{ bullet->position.x, bullet->position.y, bullet->bullet_T.width * 1.0f, bullet->bullet_T.height * 1.0f })) {
 
 			this->bottomLeft->currentHealth -= bullet->power;
-			this->health -= bullet->power;
 
-			printf("___bunker__HIT__<b.type:%d><bottom-left:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><bottom-left:%d><b.health:%d>______\n", (int)bullet->type, this->bottomLeft->currentHealth, this->health);
 
 			if (bottomLeft->currentHealth < 10) {
 				delete bottomLeft;
 				bottomLeft = nullptr;
+				this->health--;
+
+				if (this->health < 1)
+					return 2;
 			}
 
-			return true;
+			return 1;
 		}
 	}
 
@@ -183,20 +203,23 @@ bool Bunker::collisionDetector(Bullet* bullet) {
 			Rectangle{ bullet->position.x, bullet->position.y, bullet->bullet_T.width * 1.0f, bullet->bullet_T.height * 1.0f })) {
 
 			this->bottomRight->currentHealth -= bullet->power;
-			this->health -= bullet->power;
 
-			printf("___bunker__HIT__<b.type:%d><bottom-right:%d>______\n", (int)bullet->type, this->topLeft->currentHealth);
+			printf("___bunker__HIT__<b.type:%d><bottom-right:%d><b.health:%d>______\n", (int)bullet->type, this->bottomRight->currentHealth, this->health);
 
 			if (bottomRight->currentHealth < 10) {
 				delete bottomRight;
 				bottomRight = nullptr;
+				this->health--;
+
+				if (this->health < 1)
+					return 2;
 			}
 
-			return true;
+			return 1;
 		}
 	}
 
-	return false;
+	return 0;
 }
 
 void Bunker::draw(void) {

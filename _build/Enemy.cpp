@@ -8,7 +8,7 @@ Enemy::Enemy(Texture2D enemy_t1, Texture2D enemy_t2, Texture2D enemyExploding_t,
 
 // Animation init
 	this->movementState = true;															// Determine which movement animation texture draw
-	this->explodingAnimFramesCounter = 5;
+	this->explodingAnimFramesCounter = 7;
 
 // Data init
 	//this->resistence = 1;

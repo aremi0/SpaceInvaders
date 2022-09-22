@@ -37,7 +37,7 @@ The game is composed of several elements:
 - **Bullet:** an object used by player and enemies to destroy each other.  
     There are four types of bullet; *player's bullet* and three types of enemies bullet: *slower*, *faster*, *powerful*.
     Currently in a frame are allowed (through a settable control mechanism) to be at most 2 player's bullet and 3 enemies bullet.
-- **Bunker:** in every game, as in the original game, there will be 3 bunker, that is an object composed of 8 different slices, each one with it's own graphic, animation and resistence to the bullet.
+- **Bunker:** in every game, as in the original game, there will be three destructible bunker, that is an object composed of 8 different slices, each one with it's own graphic, animation and resistence to the bullet.
 
 ### Collision detector
 There is collision detection between:

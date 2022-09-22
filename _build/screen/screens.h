@@ -69,8 +69,8 @@ int FinishOptionsScreen(void);
 // Gameplay Screen Functions Declaration
 //----------------------------------------------------------------------------------
 void InitGameplayScreen(std::vector<Enemy>& enemies);
-void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<EnemyBullet>& enemiesBullets, std::vector<Enemy>& enemies, Bunker* bunker1);
-void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<EnemyBullet>& enemiesBullets, std::vector<Enemy>& enemies, Bunker* bunker1);
+void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<EnemyBullet>& enemiesBullets, std::vector<Enemy>& enemies, std::array<Bunker*, 3>& bunkers);
+void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std::vector<EnemyBullet>& enemiesBullets, std::vector<Enemy>& enemies, std::array<Bunker*, 3>& bunkers);
 void UnloadGameplayScreen(void);
 int FinishGameplayScreen(void);
 

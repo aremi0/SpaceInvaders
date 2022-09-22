@@ -7,7 +7,7 @@ Bullet::Bullet(Texture2D bullet_t, Texture2D bulletExploding_t, Position spawn, 
 	
 // Animation init
 	this->exploding = exploding;
-	this->explodingAnimFramesCounter = 5;
+	this->explodingAnimFramesCounter = 7;
 
 // Data init
 	this->position.x = spawn.x;
@@ -17,7 +17,8 @@ Bullet::Bullet(Texture2D bullet_t, Texture2D bulletExploding_t, Position spawn, 
 	//BulletType dependance data
 	if (type == BulletType::PLAYER_BULLET) {
 		this->speed = 650;
-		this->power = 450;
+		//this->power = 450;
+		this->power = 10000;
 	}
 	else if (type == BulletType::SLOWER_BULLET) {
 		this->speed = 180;

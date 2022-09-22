@@ -32,6 +32,7 @@ std::vector<Texture2D> allTexture;
 
 // Bunker resources
 Bunker* bunker1;
+std::array<Bunker*, 3> bunkers;
 
 // Player-specified resources
 Sound fxBulletShot = { 0 };
@@ -106,8 +107,37 @@ int main(void)
     //----------------------------------------------------------------------------------
     player = new Player(allTexture.at(TextureIndexes::PLAYER_T), allTexture.at(TextureIndexes::PLAYER_EXPLODING_1_T), allTexture.at(TextureIndexes::PLAYER_EXPLODING_2_T));
 
-    int i = TextureIndexes::BUNKER_TOP_LEFT_1_T;
-    bunker1 = new Bunker(Position{ 56, 520 }, allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_2_T),
+
+
+    bunker1 = new Bunker(Position{ 450 - (allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T).width + allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T).width / 2.0f) , screenHeight * 0.765 }, allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_2_T),
+        allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_3_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_4_T), allTexture.at(TextureIndexes::BUNKER_CENTER_1_T),
+        allTexture.at(TextureIndexes::BUNKER_CENTER_2_T), allTexture.at(TextureIndexes::BUNKER_CENTER_3_T), allTexture.at(TextureIndexes::BUNKER_CENTER_4_T),
+        allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_2_T), allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_3_T),
+        allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_4_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_2_T),
+        allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_3_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_4_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_1_T),
+        allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_2_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_3_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_4_T));
+
+    // Left
+    bunkers[0] = new Bunker(Position{ ((screenWidth / 2) - (screenWidth / 3)) - (allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T).width + allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T).width / 2.0f), screenHeight * 0.765 },
+        allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_2_T),
+        allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_3_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_4_T), allTexture.at(TextureIndexes::BUNKER_CENTER_1_T),
+        allTexture.at(TextureIndexes::BUNKER_CENTER_2_T), allTexture.at(TextureIndexes::BUNKER_CENTER_3_T), allTexture.at(TextureIndexes::BUNKER_CENTER_4_T),
+        allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_2_T), allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_3_T),
+        allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_4_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_2_T),
+        allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_3_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_4_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_1_T),
+        allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_2_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_3_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_4_T));
+    // Center
+    bunkers[1] = new Bunker(Position{ (screenWidth / 2) - (allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T).width + allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T).width / 2.0f), screenHeight * 0.765 },
+        allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_2_T),
+        allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_3_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_4_T), allTexture.at(TextureIndexes::BUNKER_CENTER_1_T),
+        allTexture.at(TextureIndexes::BUNKER_CENTER_2_T), allTexture.at(TextureIndexes::BUNKER_CENTER_3_T), allTexture.at(TextureIndexes::BUNKER_CENTER_4_T),
+        allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_2_T), allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_3_T),
+        allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_4_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_2_T),
+        allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_3_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_LEFT_4_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_1_T),
+        allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_2_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_3_T), allTexture.at(TextureIndexes::BUNKER_BOTTOM_RIGHT_4_T));
+    // Right
+    bunkers[2] = new Bunker(Position{ ((screenWidth / 2) + (screenWidth / 3)) - (allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T).width + allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T).width / 2.0f),screenHeight * 0.765 },
+        allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_2_T),
         allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_3_T), allTexture.at(TextureIndexes::BUNKER_TOP_LEFT_4_T), allTexture.at(TextureIndexes::BUNKER_CENTER_1_T),
         allTexture.at(TextureIndexes::BUNKER_CENTER_2_T), allTexture.at(TextureIndexes::BUNKER_CENTER_3_T), allTexture.at(TextureIndexes::BUNKER_CENTER_4_T),
         allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_1_T), allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_2_T), allTexture.at(TextureIndexes::BUNKER_TOP_RIGHT_3_T),
@@ -635,7 +665,7 @@ static void UpdateDrawFrame(void)
             } break;
             case GAMEPLAY:
             {
-                UpdateGameplayScreen(player, playerBullets, enemiesBullets, enemies, bunker1);
+                UpdateGameplayScreen(player, playerBullets, enemiesBullets, enemies, bunkers);
 
                 if (FinishGameplayScreen() == 1) TransitionToScreen(ENDING);
                 else if (FinishGameplayScreen() == 2) TransitionToScreen(OPTIONS);
@@ -664,7 +694,7 @@ static void UpdateDrawFrame(void)
             case LOGO: DrawLogoScreen(); break;
             case TITLE: DrawTitleScreen(); break;
             case OPTIONS: DrawOptionsScreen(); break;
-            case GAMEPLAY: DrawGameplayScreen(player, playerBullets, enemiesBullets, enemies, bunker1); break;
+            case GAMEPLAY: DrawGameplayScreen(player, playerBullets, enemiesBullets, enemies, bunkers); break;
             case ENDING: DrawEndingScreen(); break;
             default: break;
         }

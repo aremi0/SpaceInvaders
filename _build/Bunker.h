@@ -34,6 +34,6 @@ public:
 			Texture2D bL1, Texture2D bL2, Texture2D bL3, Texture2D bL4,
 			Texture2D bR1, Texture2D bR2, Texture2D bR3, Texture2D bR4);
 
-	bool collisionDetector(Bullet* bullet);
+	unsigned collisionDetector(Bullet* bullet);
 	void draw(void);
 };
