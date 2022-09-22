@@ -9,11 +9,11 @@
 ---  
 
 ## Description
-- [General game rules]. (./readme.md#General game rules)
-- [Game Views]. (./#Views)
-- [Gameplay elements]. (#Gameplay elements)
-- [Collision detector]. (#Collision detector)
-- [Enemies AI]. (#Enemies AI)
+- [General game rules] (#General game rules).
+- [Game Views] (#Views).
+- [Gameplay elements] (#Gameplay elements).
+- [Collision detector] (#Collision detector).
+- [Enemies AI] (#Enemies AI).
 
 ### General game rules
 [Game rules](https://www.classicgaming.cc/classics/space-invaders/play-guide)
@@ -35,23 +35,24 @@ The game is composed of several elements:
 - **Player:** an object in the form of a Tank that will allow the user to interact (play) with the game.
 - **Enemy:** a grid of 11x5 of three type of alien (Squid, Crab and Octopus) plus a Boss (UFO, that will appear randomly).
 - **Bullet:** an object used by player and enemies to destroy each other.  
-    There are four types of bullet; *player's bullet* and three types of enemies bullet: *slower*, *faster*, *powerful*.
+    There are four types of bullet; *player bullet* and three types of enemies bullet: *slower*, *faster*, *powerful*.
     Currently in a frame are allowed (through a settable control mechanism) to be at most 2 player's bullet and 3 enemies bullet.
 - **Bunker:** in every game, as in the original game, there will be three destructible bunker, that is an object composed of 8 different slices, each one with it's own graphic, animation and resistence to the bullet.
 
 ### Collision detector
 There is collision detection between:
-1. Player with enemies's bullets.
-2. Enemies with player's bullets.
-3. Player's bullets with roof of gameplay's window.
-4. Enemies's bullets with floor of gameplay's window.
-5. Player's bullets with enemies's bullets.
-6. Player's bullets with bunker.
-7. Enemies's bullets with bunker.
+1. Player with enemies bullets.
+2. Enemies with player bullets.
+3. Player bullets with roof of gameplay window.
+4. Enemies bullets with floor of gameplay window.
+5. Player bullets with enemies bullets.
+6. Player bullets with bunker.
+7. Enemies bullets with bunker.
 
 ### Enemies AI
 The enemies will act as a team (the 11x5 grid) and not indiviually with 3 different attack strategy, based of the player status: 
 All these following evaluation will be executed each 10 frames (time to see if player is moving or not).
+Enemies will shot their bullet with a settable rateo of fire.
 
 #### Strategy 1: static_AI  
 If currently the player is still in the same position will be triggered this stragety. If the player is in the fire range of one column of the enemies grid so
@@ -69,7 +70,5 @@ If 0 was returned by the 2 strategies above that means the player is currently o
 to shot the powerful bullet at one random player's bunker.  
   
   
-### Some screen
-
-  
-TODO update and corrent this readme.  
+### Gallery
+<img src="https://i.postimg.cc/CxmNxdDd/1.png" alt="drawing" width="320"/>
