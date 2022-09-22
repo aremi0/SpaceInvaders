@@ -71,4 +71,4 @@ to shot the powerful bullet at one random player's bunker.
   
   
 ### Gallery
-<img src="https://i.postimg.cc/CxmNxdDd/1.png" alt="drawing" width="400"/>
+<a href="https://ibb.co/2jqxpK1"><img src="https://i.ibb.co/2jqxpK1/prova.png" alt="prova" border="0"></a>
