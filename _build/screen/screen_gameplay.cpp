@@ -11,66 +11,63 @@
 #include "screens.h"
 #include <iostream>
 #include <random>
+#include <string>
+
+
+#define MOVEMENT_SPEED 50
+#define ROW_GRADUAL_SPEED 8
+
 
 #define AI_REFRESH_RATE 10
-#define ENEMIES_MAX_SHOT 3
-#define ENEMIES_WAIT_BEFORE_SHOT 50                                           // Substantially set the enemies fire rateo
+#define ENEMIES_MAX_BULLET 3
+#define ENEMIES_WAIT_BEFORE_SHOT 50                                           // Set the enemies fire rateo (frames between shots)
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
+
+// __debug_mode
+unsigned debug_mode;
+std::array<std::string, 128> debug_text;
+
+// View
 static int finishScreen = 0;
-int SPEED;                                                                    // Speed of enemies's grid movement
-int ROWS_SPEED;                                                               // Speed of enemies's grid rows
+int textState = 0;
+bool musicState = true;
+int framesCounter = 0;
+int textFramesCounter = 0;
 char toastMsg[128];
 char staticMsg[128];
-
-//int playerBulletsCounter;
-//int enemiesBulletsCounter;
-
-// Enemies AI
-std::array<int, 55> aliveEnemiesMatrix;                                       // 
-std::array<int, 11> enemiesColumnsDeathCounter;                               // Determine column status of actually death enemies
-Enemy* attacker;
-int enemyShotWait;
-bool enemyHasShot;
-bool enemyCanShot;
-
-// AI predictive strategy variables
-int AI_framesCounter;
-float currPl_x;
-float nextPl_x;
-char AI_text[3][16];
-
-// State flags
-bool musicState = true;
-int state = 0;
+//----------------------------------------------------------------------------------
+// Gameplay
+int SPEED;                                                                    // Speed of enemies's grid movement
+int ROWS_SPEED;                                                               // Speed of enemies's grid rows
 bool enemyShouldMove = false;
-int textState = 0;
-
+//----------------------------------------------------------------------------------
 // Animation
 int currRowEnemies = 1;
 Movement enemyCurrentDirection;
 std::vector<Bullet> explodingBulletsAnim;                                  // Container of player's exploding bullets
 std::vector<Enemy> explodingEnemiesAnim;                                   // Container of exploding enemies
+//----------------------------------------------------------------------------------
+// Enemies
+std::array<int, 11> enemiesColumnsDeathCounter;                               // Determine column status of actually death enemies
+Enemy* attacker;
+int enemyShotWait;
+bool enemyHasShot;
+bool enemyCanShot;
+// predictive_AI
+int AI_framesCounter;
+float currPl_x;
+float nextPl_x;
+char AI_text[3][16];
+//----------------------------------------------------------------------------------
 
-// Animation frames counter
-int framesCounter = 0;
-int textFramesCounter = 0;
 
 //----------------------------------------------------------------------------------
 //      __DEBUG
 //----------------------------------------------------------------------------------
-// UNDONE to delete in future
-void debug_printAlEnMx() {
-    printf("__debug__Alive_Enemies_Matrix__\n");
-    for (int i = 0; i < 5; i++) {
-        printf("%d  %d  %d  %d  %d  %d  %d  %d  %d  %d  %d\n", aliveEnemiesMatrix[i + 0], aliveEnemiesMatrix[i + 5], aliveEnemiesMatrix[i + 10],
-            aliveEnemiesMatrix[i + 15], aliveEnemiesMatrix[i + 20], aliveEnemiesMatrix[i + 25], aliveEnemiesMatrix[i + 30], aliveEnemiesMatrix[i + 35],
-            aliveEnemiesMatrix[i + 40], aliveEnemiesMatrix[i + 45], aliveEnemiesMatrix[i + 50]);
-    }
-    printf("\n");
-}
+
 
 //----------------------------------------------------------------------------------
 //      UPDATES
@@ -86,6 +83,7 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
     }
 
     // Press P to change to PAUSE screen
+    // TODO pause-screen
     if (IsKeyPressed(KEY_P))
     {
         finishScreen = 2;
@@ -127,8 +125,8 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
     if (IsKeyPressed(KEY_DOWN) && SPEED != 50)
     {
         textState = 3;
-        SPEED = 50;
-        ROWS_SPEED = 8;
+        SPEED = MOVEMENT_SPEED;
+        ROWS_SPEED = ROW_GRADUAL_SPEED;
         PlaySound(fxCoin);
     }
 
@@ -145,6 +143,41 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
             Position{ player->position.x + (player->player_T.width / 2), player->position.y }, BulletType::PLAYER_BULLET));
 
         PlaySound(fxBulletShot);
+    }
+
+    // Press TAB to enter __debug_mode
+    // TODO __debug_mode
+    if (IsKeyPressed(KEY_TAB)) {
+
+        switch (debug_mode)
+        {
+            case 0: {
+                debug_mode = 1;
+                debug_text.fill("");
+                debug_text[0] = "__debug_mode:";
+                debug_text[1] = "enemies_AI";
+                debug_text[2] = "player is:";
+                debug_text[4] = "strategy:";
+                debug_text[6]= "target.x:";
+                break;
+            }
+
+            case 1: {
+                debug_mode = 2;
+                debug_text.fill("");
+                break;
+            }
+            case 2: {
+                debug_mode = 3;
+                debug_text.fill("");
+                break;
+            }
+            case 3: {
+                debug_mode = 0;
+                debug_text.fill("");
+                break;
+            }
+        }
     }
 }
 
@@ -289,12 +322,10 @@ void collisionDetector(std::vector<Bullet>& playerBullets, std::vector<Enemy>& e
                 Rectangle{ bul->position.x, bul->position.y, bul->bullet_T.width * 1.0f, bul->bullet_T.height * 1.0f })) {
 
                 // Updates enemies AI structure
-                aliveEnemiesMatrix[((enemy->gridX - 1) * 5 + enemy->gridY) - 1] = 0;
                 enemiesColumnsDeathCounter[enemy->gridX - 1]++;
                 //----------------------------------------------------------------------------------
 
                 printf("___enemy__HIT__<x:%d><y:%d>______\n", enemy->gridX, enemy->gridY);
-                debug_printAlEnMx();
 
                 PlaySound(fxEnemyExplosion);
 
@@ -454,14 +485,16 @@ int static_AI(float playerX, std::vector<Enemy>& enemies) {
         enemy += offset;
         float enemyX = enemy->position.x + enemy->enemy_T1.width / 2;
 
-        std::sprintf(AI_text[2], "%s", "out_of_range");
+        if (debug_mode == 1)
+            debug_text[7] = "out_of_range";
 
         // Player is inside range of the current enemy => SHOT
         if (playerX <= enemyX + 12.0 && playerX >= enemyX - 12.0) {
 
-            enemy->AI_target = true;
-
-            std::sprintf(AI_text[2], "%d", (int)playerX);
+            if (debug_mode == 1) {
+                enemy->AI_target = true;
+                debug_text[7] = std::to_string(static_cast<int>(playerX));
+            }
 
             attacker = enemy._Ptr;
             return 1;
@@ -500,14 +533,17 @@ int predictive_AI(Player* player, std::vector<Enemy>& enemies, int direction) {
         float framesBullet = ((player->position.y + 3) - (enemy->position.y + allTexture.at(ENEMY_FASTER_BULLET_1_T).height)) / (FASTER * frameTime); // Frames needed to a bullet to reach player.y
         float predictive_x = nextPl_x + (player->speed * frameTime * framesBullet * direction);
 
-        std::sprintf(AI_text[2], "%s", "out_of_range");
+        if (debug_mode == 1)
+            debug_text[7] = "out_of_range";
 
         // Player will be inside range of this enemy => PREVENTIVE SHOT
         if (predictive_x <= enemyX + 19.0 && predictive_x >= enemyX - 19.0) {
 
-            //printf("___debug__<p.x:%d><t.x:%d>\n", (int)playerX, (int)enemyX);
-            enemy->AI_target = true;
-            std::sprintf(AI_text[2], "%d", (int)predictive_x);
+            if (debug_mode == 1) {
+                enemy->AI_target = true;
+                debug_text[7] = std::to_string(static_cast<int>(predictive_x));
+            }
+
             attacker =  enemy._Ptr;
             return 2;
         }
@@ -517,10 +553,13 @@ int predictive_AI(Player* player, std::vector<Enemy>& enemies, int direction) {
     return 0;
 }
 
-int bunker_AI(Bunker* bunker, std::vector<Enemy>& enemies) {
+int bunkerAttack_AI(Bunker* bunker, std::vector<Enemy>& enemies) {
 
-    std::sprintf(AI_text[0], "out_of_range");
-    std::sprintf(AI_text[1], "bunker_attack");
+    if (debug_mode == 1) {
+        debug_text[3] = "out_of_range";
+        debug_text[5] = "bunkerAttack_AI";
+    }
+
     float sliceX = 0.0f;
 
     if (bunker->topLeft || bunker->centerLeft || bunker->bottomLeft)
@@ -530,7 +569,6 @@ int bunker_AI(Bunker* bunker, std::vector<Enemy>& enemies) {
     else
         sliceX = bunker->spawn.x + 60.0f;
 
-
     for (auto enemy = begin(enemies); enemy != end(enemies); enemy++) {
 
         int x = enemy->gridX - 1;
@@ -539,14 +577,13 @@ int bunker_AI(Bunker* bunker, std::vector<Enemy>& enemies) {
         enemy += offset;
         float enemyX = enemy->position.x + enemy->enemy_T1.width / 2;
 
-        std::sprintf(AI_text[2], "%s", "out_of_range");
-
         // Bunker is inside range of the current enemy => SHOT
         if (sliceX <= enemyX + 12.0 && sliceX >= enemyX - 12.0) {
 
-            enemy->AI_target = true;
-
-            std::sprintf(AI_text[2], "%d", (int)sliceX);
+            if (debug_mode == 1) {
+                enemy->AI_target = true;
+                debug_text[7] = std::to_string(static_cast<int>(sliceX));
+            }
 
             attacker = enemy._Ptr;
             return 1;
@@ -607,6 +644,7 @@ void updateManager(Player* player, std::vector<Bullet>& playerBullets, std::vect
 void textHandler() {
 
     int aux = 0;
+    int newLine = 15;
 
     //DrawTextEx(font, "GAMEPLAY SCREEN", Vector2{ 20, 10 }, font.baseSize * 1.0f, 4, Color{ 190, 33, 55, 100 });
     //DrawText("Movement: \tW - A\nShot: \tSPACE", 25, 30, 18, MAROON);
@@ -639,12 +677,39 @@ void textHandler() {
     }
 
     // PersistentMsg
+
+    for (int i = 0; i < 128; i++) {
+        if (debug_text[i].size() == 0)
+            break;
+
+        if (i == 0) {
+            aux = MeasureText(debug_text[i].c_str(), 14);
+            DrawText(debug_text[i].c_str(), 10, 5, 14, MAROON);
+            continue;
+        }
+        else if (i == 1) {
+            aux = MeasureText(debug_text[i].c_str(), 14);
+            DrawText(debug_text[i].c_str(), 120, 5, 14, PURPLE);
+            continue;
+        }
+        else if (i % 2 == 0) {
+            aux = MeasureText(debug_text[i].c_str(), 13);
+            DrawText(debug_text[i].c_str(), 10, 5 + newLine, 13, RED);
+            aux = MeasureText(debug_text[i].c_str(), 13);
+            DrawText(debug_text[++i].c_str(), 120, 5 + newLine, 13, YELLOW);
+        }
+
+        newLine += 15;
+    }
+
+    /*
     aux = MeasureText(staticMsg, 14);
     std::sprintf(staticMsg, "__debug_AI\n\tplayer is \n\tstrategy: \n\ttarget.x: ");
     DrawText(staticMsg, GetScreenWidth() - 170, GetScreenHeight() * 0.85, 13, RED);
 
     std::sprintf(staticMsg, "\t%s\n\t%s\n\t%s", AI_text[0], AI_text[1], AI_text[2]);
     DrawText(staticMsg, GetScreenWidth() - 100, GetScreenHeight() * 0.88, 13, AI_text[0][0] == 'm' ? PURPLE : YELLOW);
+    */
 }
 
 // Handle all elements to draw
@@ -695,41 +760,42 @@ void drawManager(Player* player, std::vector<Bullet>& playerBullets, std::vector
 // Gameplay Screen Initialization logic
 void InitGameplayScreen(std::vector<Enemy>& enemies)
 {
-    // Initialize GAMEPLAY screen variables here!
-    if(enemies.front().direction == -1)
-        enemyCurrentDirection = Movement::LEFT;
-    else
-        enemyCurrentDirection = Movement::RIGHT;
+    //__debug_mode
+    debug_mode = 0;
 
-    std::sprintf(toastMsg, " ");
-    std::sprintf(staticMsg, " ");
-
+    // View
     finishScreen = 0;
-    aliveEnemiesMatrix.fill(1);
-    SPEED = 50;
-    ROWS_SPEED = 8;
-//    playerBulletsCounter = 0;
-//    enemiesBulletsCounter = 0;
-    
-    currRowEnemies = 1;
-    musicState = true;
-    enemyShouldMove = false;
-    state = 0;
     textState = 0;
     textFramesCounter = 0;
     framesCounter = 0;
+    musicState = true;
+    std::sprintf(toastMsg, " ");
+    std::sprintf(staticMsg, " ");
+    //----------------------------------------------------------------------------------
+    // Gameplay
+    SPEED = MOVEMENT_SPEED;
+    ROWS_SPEED = ROW_GRADUAL_SPEED;
+    enemyShouldMove = false;
+    //----------------------------------------------------------------------------------
+    // Animation
+    currRowEnemies = 1;
 
+    if (enemies.front().direction == -1)
+        enemyCurrentDirection = Movement::LEFT;
+    else
+        enemyCurrentDirection = Movement::RIGHT;
+    //----------------------------------------------------------------------------------
+    // Enemies
     enemiesColumnsDeathCounter.fill(0);
-    //isAttackerSelected = 0;
     attacker = nullptr;
     enemyShotWait = ENEMIES_WAIT_BEFORE_SHOT;
     enemyHasShot = false;
     enemyCanShot = true;
-
-    // Predictive AI initialization
+    // predictive_AI
     AI_framesCounter = AI_REFRESH_RATE;
     currPl_x = 0.0f;
     nextPl_x = 0.0f;
+
     std::sprintf(AI_text[0], " ");
     std::sprintf(AI_text[1], " ");
     std::sprintf(AI_text[2], " ");
@@ -758,10 +824,12 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
         int result_AI = AI(player, enemies, 1);
 
         // Static_AI
-        if (result_AI == 1 && enemiesBullets.size() < ENEMIES_MAX_SHOT && enemyCanShot) {
+        if (result_AI == 1 && enemiesBullets.size() < ENEMIES_MAX_BULLET && enemyCanShot) {
 
-            std::sprintf(AI_text[0], "still");
-            std::sprintf(AI_text[1], "static");
+            if (debug_mode == 1) {
+                debug_text[3] = "still";
+                debug_text[5] = "static_AI";
+            }
 
             // Randomly selecting a enemy bullet type
             std::random_device dev;
@@ -787,10 +855,12 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
             enemyHasShot = true;
         }
         // Predictive_AI
-        else if (result_AI == 2 && enemiesBullets.size() < ENEMIES_MAX_SHOT && enemyCanShot) {
+        else if (result_AI == 2 && enemiesBullets.size() < ENEMIES_MAX_BULLET && enemyCanShot) {
 
-            std::sprintf(AI_text[0], "moving");
-            std::sprintf(AI_text[1], "predictive");
+            if (debug_mode == 1) {
+                debug_text[3] = "moving";
+                debug_text[5] = "predictive_AI";
+            }
 
             enemiesBullets.push_back(EnemyBullet(allTexture.at(ENEMY_FASTER_BULLET_1_T), allTexture.at(ENEMY_FASTER_BULLET_2_T), allTexture.at(ENEMY_FASTER_BULLET_3_T),
                 allTexture.at(ENEMY_FASTER_BULLET_4_T), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
@@ -800,9 +870,9 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
             enemyHasShot = true;
         }
         // Bunkers_AI
-        else if (result_AI == 0 && enemiesBullets.size() < ENEMIES_MAX_SHOT && enemyCanShot) {
+        else if (result_AI == 0 && enemiesBullets.size() < ENEMIES_MAX_BULLET && enemyCanShot) {
 
-            if (bunkers[0] && bunker_AI(bunkers[0], enemies)) {
+            if (bunkers[0] && bunkerAttack_AI(bunkers[0], enemies)) {
                 enemiesBullets.push_back(EnemyBullet(allTexture.at(ENEMY_POWERFUL_BULLET_1_T), allTexture.at(ENEMY_POWERFUL_BULLET_2_T), allTexture.at(ENEMY_POWERFUL_BULLET_3_T),
                     allTexture.at(ENEMY_POWERFUL_BULLET_4_T), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
                     Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, BulletType::POWERFUL_BULLET));
@@ -810,7 +880,7 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
                 enemyCanShot = false;
                 enemyHasShot = true;
             }
-            else if (bunkers[1] && bunker_AI(bunkers[1], enemies)) {
+            else if (bunkers[1] && bunkerAttack_AI(bunkers[1], enemies)) {
                 enemiesBullets.push_back(EnemyBullet(allTexture.at(ENEMY_POWERFUL_BULLET_1_T), allTexture.at(ENEMY_POWERFUL_BULLET_2_T), allTexture.at(ENEMY_POWERFUL_BULLET_3_T),
                     allTexture.at(ENEMY_POWERFUL_BULLET_4_T), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
                     Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, BulletType::POWERFUL_BULLET));
@@ -818,7 +888,7 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
                 enemyCanShot = false;
                 enemyHasShot = true;
             }
-            else if (bunkers[2] && bunker_AI(bunkers[2], enemies)) {
+            else if (bunkers[2] && bunkerAttack_AI(bunkers[2], enemies)) {
                 enemiesBullets.push_back(EnemyBullet(allTexture.at(ENEMY_POWERFUL_BULLET_1_T), allTexture.at(ENEMY_POWERFUL_BULLET_2_T), allTexture.at(ENEMY_POWERFUL_BULLET_3_T),
                     allTexture.at(ENEMY_POWERFUL_BULLET_4_T), allTexture.at(TextureIndexes::ENEMY_BULLET_EXPLODING_T),
                     Position{ attacker->position.x + (attacker->enemy_T1.width / 2), attacker->position.y }, BulletType::POWERFUL_BULLET));
@@ -827,9 +897,11 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
                 enemyHasShot = true;
             }
             else {
-                std::sprintf(AI_text[0], "out_of_range");
-                std::sprintf(AI_text[1], "no_target");
-                std::sprintf(AI_text[2], "---");
+                if (debug_mode == 1) {
+                    debug_text[3] = "out_of_range";
+                    debug_text[5] = "none";
+                    debug_text[7] = "no_target";
+                }
 
                 enemyCanShot = true;
                 enemyHasShot = false;
