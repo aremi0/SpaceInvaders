@@ -68,6 +68,7 @@ If, on the other hand, the player at that time will be out of the fire range of 
 #### Strategy 3: bunkerAttack_AI
 If 0 was returned by the 2 strategies above that means the player is currently out of any fire range so in the meanwhile will be selected an enemy
 to shot the powerful bullet at one random player's bunker.  
+
 ---  
 
 ### Gallery
