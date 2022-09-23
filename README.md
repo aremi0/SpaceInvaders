@@ -65,10 +65,10 @@ Starting from the player current position, his movement speed and his movement d
 in the time taken by a faster type bullet of the bottom row of the enemy in the column which the player will be in fire range.
 If, on the other hand, the player at that time will be out of the fire range of the entire grid will be returned 0.  
 
-#### Strategy 3: "let's wait"_AI
+#### Strategy 3: bunkerAttack_AI
 If 0 was returned by the 2 strategies above that means the player is currently out of any fire range so in the meanwhile will be selected an enemy
 to shot the powerful bullet at one random player's bunker.  
-  
-  
+---  
+
 ### Gallery
 <a href="https://ibb.co/2jqxpK1"><img src="https://i.ibb.co/2jqxpK1/prova.png" alt="prova" border="0"></a>
