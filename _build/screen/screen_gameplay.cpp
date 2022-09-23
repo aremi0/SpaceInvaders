@@ -28,7 +28,7 @@
 
 // __debug_mode
 unsigned debug_mode;
-std::array<std::string, 10> debug_text;
+std::array<std::string, 15> debug_text;
 
 // View
 static int finishScreen = 0;
@@ -167,7 +167,9 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
                 debug_text[1] = "enemies_AI";
                 debug_text[2] = "player is:";
                 debug_text[4] = "strategy:";
-                debug_text[6]= "target.x:";
+                debug_text[6] = "target.x:";
+                debug_text[8] = "AI_refresh.rate:";
+                debug_text[9] = std::to_string(AI_REFRESH_RATE);
                 break;
             }
 
@@ -192,8 +194,29 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
                 break;
             }
             case 3: {
+                debug_mode = 4;
+                debug_text.fill("");
+                debug_text[0] = "__debug_mode:";
+                debug_text[1] = "keymapping";
+                debug_text[2] = "A - D - SPACE";
+                debug_text[3] = "move - shot";
+                debug_text[4] = "ENTER";
+                debug_text[5] = "next view";
+                debug_text[6] = "P";
+                debug_text[7] = "pause/resume game";
+                debug_text[8] = "M";
+                debug_text[9] = "pause/resume music";
+                debug_text[10] = "UP/DOWN";
+                debug_text[11] = "faster/slower";
+                debug_text[12] = "TAB";
+                debug_text[13] = "__debug_mode";
+
+                break;
+            }
+            case 4: {
                 debug_mode = 0;
                 debug_text.fill("");
+                debug_text[0] = "Press TAB for info";
                 break;
             }
         }
@@ -768,6 +791,8 @@ void drawManager(Player* player, std::vector<Bullet>& playerBullets, std::vector
 void InitGameplayScreen(std::vector<Enemy>& enemies)
 {
     //__debug_mode
+    debug_text.fill("");
+    debug_text[0] = "Press TAB for info";
     debug_mode = 0;
 
     // View
