@@ -3,7 +3,7 @@
 *   raylib - Advance Game template
 *
 *   Gameplay Screen Functions Definitions (Init, Update, Draw, Unload)
-* 
+*
 *
 **********************************************************************************************/
 
@@ -160,65 +160,65 @@ void keyboardEventsHandler(Player* player, std::vector<Bullet>& playerBullets, s
 
         switch (debug_mode)
         {
-            case 0: {
-                debug_mode = 1;
-                debug_text.fill("");
-                debug_text[0] = "__debug_mode:";
-                debug_text[1] = "enemies_AI";
-                debug_text[2] = "player is:";
-                debug_text[4] = "strategy:";
-                debug_text[6] = "target.x:";
-                debug_text[8] = "AI_refresh.rate:";
-                debug_text[9] = std::to_string(AI_REFRESH_RATE);
-                break;
-            }
+        case 0: {
+            debug_mode = 1;
+            debug_text.fill("");
+            debug_text[0] = "__debug_mode:";
+            debug_text[1] = "enemies_AI";
+            debug_text[2] = "player is:";
+            debug_text[4] = "strategy:";
+            debug_text[6] = "target.x:";
+            debug_text[8] = "AI_refresh.rate:";
+            debug_text[9] = std::to_string(AI_REFRESH_RATE);
+            break;
+        }
 
-            case 1: {
-                debug_mode = 2;
-                debug_text.fill("");
-                debug_text[0] = "__debug_mode:";
-                debug_text[1] = "difficulty";
-                debug_text[2] = "mov.speed:";
-                debug_text[3] = std::to_string(SPEED);
-                debug_text[4] = "row.mov.speed:";
-                debug_text[5] = std::to_string(ROWS_SPEED);
-                debug_text[6] = "rate.of.fire:";
-                
-                break;
-            }
-            case 2: {
-                debug_mode = 3;
-                debug_text.fill("");
-                debug_text[0] = "__debug_mode:";
-                debug_text[1] = "bunker_status";
-                break;
-            }
-            case 3: {
-                debug_mode = 4;
-                debug_text.fill("");
-                debug_text[0] = "__debug_mode:";
-                debug_text[1] = "keymapping";
-                debug_text[2] = "A - D - SPACE";
-                debug_text[3] = "move - shot";
-                debug_text[4] = "ENTER";
-                debug_text[5] = "next view";
-                debug_text[6] = "P";
-                debug_text[7] = "pause/resume game";
-                debug_text[8] = "M";
-                debug_text[9] = "pause/resume music";
-                debug_text[10] = "UP/DOWN";
-                debug_text[11] = "faster/slower";
-                debug_text[12] = "TAB";
-                debug_text[13] = "__debug_mode";
+        case 1: {
+            debug_mode = 2;
+            debug_text.fill("");
+            debug_text[0] = "__debug_mode:";
+            debug_text[1] = "difficulty";
+            debug_text[2] = "mov.speed:";
+            debug_text[3] = std::to_string(SPEED);
+            debug_text[4] = "row.mov.speed:";
+            debug_text[5] = std::to_string(ROWS_SPEED);
+            debug_text[6] = "rate.of.fire:";
 
-                break;
-            }
-            case 4: {
-                debug_mode = 0;
-                debug_text.fill("");
-                debug_text[0] = "Press TAB for info";
-                break;
-            }
+            break;
+        }
+        case 2: {
+            debug_mode = 3;
+            debug_text.fill("");
+            debug_text[0] = "__debug_mode:";
+            debug_text[1] = "bunker_status";
+            break;
+        }
+        case 3: {
+            debug_mode = 4;
+            debug_text.fill("");
+            debug_text[0] = "__debug_mode:";
+            debug_text[1] = "keymapping";
+            debug_text[2] = "A - D - SPACE";
+            debug_text[3] = "move - shot";
+            debug_text[4] = "ENTER";
+            debug_text[5] = "next view";
+            debug_text[6] = "P";
+            debug_text[7] = "pause/resume game";
+            debug_text[8] = "M";
+            debug_text[9] = "pause/resume music";
+            debug_text[10] = "UP/DOWN";
+            debug_text[11] = "faster/slower";
+            debug_text[12] = "TAB";
+            debug_text[13] = "__debug_mode";
+
+            break;
+        }
+        case 4: {
+            debug_mode = 0;
+            debug_text.fill("");
+            debug_text[0] = "Press TAB for info";
+            break;
+        }
         }
     }
 }
@@ -227,7 +227,7 @@ void bulletsMovementsHandler(std::vector<Bullet>& playerBullets, std::vector<Ene
 
     // Player-Bullets movement animation
     if (!playerBullets.empty()) {
-        for (auto& bul = begin(playerBullets); bul != end(playerBullets); ) {
+        for (auto bul = begin(playerBullets); bul != end(playerBullets); ) {
 
             bul->move(GetFrameTime()); // Update bullet position
 
@@ -235,7 +235,7 @@ void bulletsMovementsHandler(std::vector<Bullet>& playerBullets, std::vector<Ene
 
                 bul->position.y = 0;
                 bul->exploding = true;
-                explodingBulletsAnim.push_back(*bul._Ptr);
+                explodingBulletsAnim.push_back(*bul);
                 bul = playerBullets.erase(bul);
             }
             else
@@ -245,7 +245,7 @@ void bulletsMovementsHandler(std::vector<Bullet>& playerBullets, std::vector<Ene
 
     // Enemies-Bullets movement animation
     if (!enemiesBullets.empty()) {
-        for (auto& bul = begin(enemiesBullets); bul != end(enemiesBullets); ) {
+        for (auto bul = begin(enemiesBullets); bul != end(enemiesBullets); ) {
 
             bul->move(GetFrameTime()); // Update bullet position
 
@@ -255,7 +255,7 @@ void bulletsMovementsHandler(std::vector<Bullet>& playerBullets, std::vector<Ene
 
                 bul->position.y = GetScreenHeight() - bul->bulletExplodind_T.height;
                 bul->exploding = true;
-                explodingBulletsAnim.push_back(*bul._Ptr);
+                explodingBulletsAnim.push_back(*bul);
                 bul = enemiesBullets.erase(bul);
             }
             else
@@ -268,7 +268,7 @@ void explodingAnimHandler(Player* player) {
 
     // FLOOR & ROOF bullets exploding animation
     if (!explodingBulletsAnim.empty()) {
-        for (auto& bul = begin(explodingBulletsAnim); bul != end(explodingBulletsAnim); ) {
+        for (auto bul = begin(explodingBulletsAnim); bul != end(explodingBulletsAnim); ) {
 
             bul->explodingAnimFramesCounter--; // Explosion duration
 
@@ -281,7 +281,7 @@ void explodingAnimHandler(Player* player) {
 
     // HITTED Enemies exploding animation
     if (!explodingEnemiesAnim.empty()) {
-        for (auto& enemy = begin(explodingEnemiesAnim); enemy != end(explodingEnemiesAnim); ) {
+        for (auto enemy = begin(explodingEnemiesAnim); enemy != end(explodingEnemiesAnim); ) {
             enemy->explodingAnimFramesCounter--;
 
             if (enemy->explodingAnimFramesCounter <= 0)
@@ -305,14 +305,14 @@ void explodingAnimHandler(Player* player) {
 
 void collisionDetector(std::vector<Bullet>& playerBullets, std::vector<Enemy>& enemies, std::array<Bunker*, 3>& bunkers, std::vector<EnemyBullet>& enemiesBullet, Player* player) {
 
-    for (auto& bul = begin(playerBullets); bul != end(playerBullets); bul++) {
+    for (auto bul = begin(playerBullets); bul != end(playerBullets); bul++) {
 
         // Check collisions of player's bullets on bunker1's slices
         if (bunkers[0]) {
-            if (unsigned flag = bunkers[0]->collisionDetector(bul._Ptr)) {
+            if (unsigned flag = bunkers[0]->collisionDetector(&(*bul))) {
 
                 bul->exploding = true;
-                explodingBulletsAnim.push_back(*bul._Ptr);
+                explodingBulletsAnim.push_back(*bul);
                 bul->position.x = DEBUG_X;
 
                 // Bunker has been completely destroyed
@@ -325,10 +325,10 @@ void collisionDetector(std::vector<Bullet>& playerBullets, std::vector<Enemy>& e
             }
         }
         if (bunkers[1]) {
-            if (unsigned flag = bunkers[1]->collisionDetector(bul._Ptr)) {
+            if (unsigned flag = bunkers[1]->collisionDetector(&(*bul))) {
 
                 bul->exploding = true;
-                explodingBulletsAnim.push_back(*bul._Ptr);
+                explodingBulletsAnim.push_back(*bul);
                 bul->position.x = DEBUG_X;
 
                 // Bunker has been completely destroyed
@@ -341,10 +341,10 @@ void collisionDetector(std::vector<Bullet>& playerBullets, std::vector<Enemy>& e
             }
         }
         if (bunkers[2]) {
-            if (unsigned flag = bunkers[2]->collisionDetector(bul._Ptr)) {
+            if (unsigned flag = bunkers[2]->collisionDetector(&(*bul))) {
 
                 bul->exploding = true;
-                explodingBulletsAnim.push_back(*bul._Ptr);
+                explodingBulletsAnim.push_back(*bul);
                 bul->position.x = DEBUG_X;
 
                 // Bunker has been completely destroyed
@@ -358,7 +358,7 @@ void collisionDetector(std::vector<Bullet>& playerBullets, std::vector<Enemy>& e
         }
 
         // Check collisions of player's bullets on enemies grid
-        for (auto& enemy = begin(enemies); enemy != end(enemies); ) {
+        for (auto enemy = begin(enemies); enemy != end(enemies); ) {
             // For each shotted player's bullet check collision with each enemy...
             if (CheckCollisionRecs(Rectangle{ enemy->position.x, enemy->position.y, enemy->enemy_T1.width * 1.0f, enemy->enemy_T1.height * 1.0f },
                 Rectangle{ bul->position.x, bul->position.y, bul->bullet_T.width * 1.0f, bul->bullet_T.height * 1.0f })) {
@@ -372,7 +372,7 @@ void collisionDetector(std::vector<Bullet>& playerBullets, std::vector<Enemy>& e
                 PlaySound(fxEnemyExplosion);
 
                 enemy->exploding = true;
-                explodingEnemiesAnim.push_back(*enemy._Ptr);
+                explodingEnemiesAnim.push_back(*enemy);
                 enemy = enemies.erase(enemy);
                 bul->position.x = DEBUG_X;
                 break;
@@ -382,7 +382,7 @@ void collisionDetector(std::vector<Bullet>& playerBullets, std::vector<Enemy>& e
         }
 
         // Check collisions of player's bullets on enemies's bullets
-        for (auto& enBul = begin(enemiesBullet); enBul != end(enemiesBullet);) {
+        for (auto enBul = begin(enemiesBullet); enBul != end(enemiesBullet);) {
 
             if (CheckCollisionRecs(Rectangle{ bul->position.x, bul->position.y, bul->bullet_T.width * 1.0f, bul->bullet_T.height * 1.0f },
                 Rectangle{ enBul->position.x, enBul->position.y, enBul->bullet_T.width * 1.0f, enBul->bullet_T.height * 1.0f })) {
@@ -391,41 +391,41 @@ void collisionDetector(std::vector<Bullet>& playerBullets, std::vector<Enemy>& e
 
                 // Player bullet start explosion
                 bul->exploding = true;
-                explodingBulletsAnim.push_back(*bul._Ptr);
+                explodingBulletsAnim.push_back(*bul);
                 //bul = playerBullets.erase(bul);
                 bul->position.x = DEBUG_X;
 
                 // Enemy bullet start explosion
                 enBul->exploding = true;
-                explodingBulletsAnim.push_back(*enBul._Ptr);
+                explodingBulletsAnim.push_back(*enBul);
                 enBul = enemiesBullet.erase(enBul);
                 break;
             }
-            else 
+            else
                 enBul++;
         }
     }
 
-    
-    for (auto& enBul = begin(enemiesBullet); enBul != end(enemiesBullet); enBul++) {
+
+    for (auto enBul = begin(enemiesBullet); enBul != end(enemiesBullet); enBul++) {
 
         // Check collisions of enemies's bullets on player
-        if (player->collisionDetector(enBul._Ptr)) {
+        if (player->collisionDetector(&(*enBul))) {
 
             PlaySound(fxPlayerExplosion);
 
             enBul->exploding = true;
-            explodingBulletsAnim.push_back(*enBul._Ptr);
+            explodingBulletsAnim.push_back(*enBul);
             enBul->position.x = DEBUG_X;
             continue;
         }
 
         // Check collisions of enemies's bullets on bunker's slices
         if (bunkers[0]) {
-            if (unsigned flag = bunkers[0]->collisionDetector(enBul._Ptr)) {
+            if (unsigned flag = bunkers[0]->collisionDetector(&(*enBul))) {
 
                 enBul->exploding = true;
-                explodingBulletsAnim.push_back(*enBul._Ptr);
+                explodingBulletsAnim.push_back(*enBul);
                 enBul->position.x = DEBUG_X;
 
                 // Bunker has been completely destroyed
@@ -438,10 +438,10 @@ void collisionDetector(std::vector<Bullet>& playerBullets, std::vector<Enemy>& e
             }
         }
         if (bunkers[1]) {
-            if (unsigned flag = bunkers[1]->collisionDetector(enBul._Ptr)) {
+            if (unsigned flag = bunkers[1]->collisionDetector(&(*enBul))) {
 
                 enBul->exploding = true;
-                explodingBulletsAnim.push_back(*enBul._Ptr);
+                explodingBulletsAnim.push_back(*enBul);
                 enBul->position.x = DEBUG_X;
 
                 // Bunker has been completely destroyed
@@ -454,10 +454,10 @@ void collisionDetector(std::vector<Bullet>& playerBullets, std::vector<Enemy>& e
             }
         }
         if (bunkers[2]) {
-            if (unsigned flag = bunkers[2]->collisionDetector(enBul._Ptr)) {
+            if (unsigned flag = bunkers[2]->collisionDetector(&(*enBul))) {
 
                 enBul->exploding = true;
-                explodingBulletsAnim.push_back(*enBul._Ptr);
+                explodingBulletsAnim.push_back(*enBul);
                 enBul->position.x = DEBUG_X;
 
                 // Bunker has been completely destroyed
@@ -538,7 +538,7 @@ int static_AI(float playerX, std::vector<Enemy>& enemies) {
                 debug_text[7] = std::to_string(static_cast<int>(playerX));
             }
 
-            attacker = enemy._Ptr;
+            attacker = &(*enemy);
             return 1;
         }
 
@@ -584,7 +584,7 @@ int predictive_AI(Player* player, std::vector<Enemy>& enemies, int direction) {
                 debug_text[7] = std::to_string(static_cast<int>(predictive_x));
             }
 
-            attacker =  enemy._Ptr;
+            attacker = &(*enemy);
             return 2;
         }
     }
@@ -604,7 +604,7 @@ int bunkerAttack_AI(Bunker* bunker, std::vector<Enemy>& enemies) {
 
     if (bunker->topLeft || bunker->centerLeft || bunker->bottomLeft)
         sliceX = bunker->spawn.x + 12.0f;
-    else if(bunker->topCenter || bunker->centerCenter)
+    else if (bunker->topCenter || bunker->centerCenter)
         sliceX = bunker->spawn.x + 36.0f;
     else
         sliceX = bunker->spawn.x + 60.0f;
@@ -625,7 +625,7 @@ int bunkerAttack_AI(Bunker* bunker, std::vector<Enemy>& enemies) {
                 debug_text[7] = std::to_string(static_cast<int>(sliceX));
             }
 
-            attacker = enemy._Ptr;
+            attacker = &(*enemy);
             return 1;
         }
 
@@ -638,7 +638,7 @@ int bunkerAttack_AI(Bunker* bunker, std::vector<Enemy>& enemies) {
 }
 
 // Real-time scheduling of an enemy that should shot to the player 
-int AI(Player* player, std::vector<Enemy>& enemies,unsigned state) {
+int AI(Player* player, std::vector<Enemy>& enemies, unsigned state) {
 
     /**
     * 1. get player's first position.
@@ -746,9 +746,9 @@ void textHandler() {
 void drawManager(Player* player, std::vector<Bullet>& playerBullets, std::vector<Enemy>& enemies, std::vector<EnemyBullet>& enemiesBullets, std::array<Bunker*, 3>& bunkers) {
 
     player->draw();
-    if(bunkers[0]) bunkers[0]->draw();
-    if(bunkers[1]) bunkers[1]->draw();
-    if(bunkers[2]) bunkers[2]->draw();
+    if (bunkers[0]) bunkers[0]->draw();
+    if (bunkers[1]) bunkers[1]->draw();
+    if (bunkers[2]) bunkers[2]->draw();
     textHandler();
 
     // Draw player's shotted bullets
@@ -840,7 +840,7 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
             enemyHasShot = false;
             enemyShotWait = ENEMIES_WAIT_BEFORE_SHOT;
 
-            if(debug_mode == 2)
+            if (debug_mode == 2)
                 debug_text[7] = std::to_string(enemyShotWait);
         }
     }
@@ -948,7 +948,7 @@ void UpdateGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, st
         textState = false;
         textFramesCounter = 0;
     }
-    
+
     // Every SPEED frames all enemies are allowed to move by 1-step
     if (framesCounter == SPEED) {
         enemyShouldMove = true;
@@ -980,7 +980,7 @@ void DrawGameplayScreen(Player* player, std::vector<Bullet>& playerBullets, std:
 
     drawManager(player, playerBullets, enemies, enemiesBullets, bunkers);            // Draw gameplay's elements
 
-    
+
 }
 
 // Gameplay Screen Unload logic
